@@ -166,7 +166,11 @@ def _overwrite(script: dict, key: str, data: list[str]):
     script.setdefault(key, {})
     for item in data:
         k, v = item.split('=')
-        script[key][k] = convert_boolean_from_input(v)
+        # Only convert booleans in vars, not in systems or secrets
+        if key == 'vars':
+            script[key][k] = convert_boolean_from_input(v)
+        else:
+            script[key][k] = v
 
 
 def _tupelize(string) -> tuple:
