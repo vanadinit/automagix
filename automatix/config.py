@@ -166,7 +166,7 @@ def _overwrite(script: dict, key: str, data: list[str]):
     script.setdefault(key, {})
     for item in data:
         k, v = item.split('=')
-        script[key][k] = v
+        script[key][k] = convert_boolean_from_input(v)
 
 
 def _tupelize(string) -> tuple:
