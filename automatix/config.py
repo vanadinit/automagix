@@ -166,7 +166,11 @@ def _overwrite(script: dict, key: str, data: list[str]):
     script.setdefault(key, {})
     for item in data:
         k, v = item.split('=')
-        script[key][k] = v
+        # Only convert booleans in vars, not in systems or secrets
+        if key == 'vars':
+            script[key][k] = convert_boolean_from_input(v)
+        else:
+            script[key][k] = v
 
 
 def _tupelize(string) -> tuple:
@@ -375,8 +379,12 @@ def update_script_from_row(row: dict, script: dict, index: int):
         key_type, key_name = key.split(':')
         assert key_type in SCRIPT_FIELDS.keys(), \
             f'First row in CSV: Field name is \'{key_type}\', but has to be one of {list(SCRIPT_FIELDS.keys())}.'
-        script[key_type][key_name] = value
+        script[key_type][key_name] = convert_boolean_from_input(value=value)
 
+def convert_boolean_from_input(value: str) -> bool | str: #Convert "true"/"false" strings to boolean, leave everything else as is.
+    if isinstance(value, str) and value.lower() in ('false', 'true'):
+        return value.lower() == 'true'
+    return value
 
 class UnknownSecretTypeException(Exception):
     pass

@@ -9,6 +9,7 @@ from time import time
 from .colors import italic, yellow
 from .environment import PipelineEnvironment, AttributedDict, AttributedDummyDict
 from .progress_bar import draw_progress_bar
+from .config import convert_boolean_from_input
 
 PERSISTENT_VARS = PVARS = AttributedDict()
 
@@ -434,9 +435,10 @@ class Command:
                 stdout=subprocess.PIPE,
             )
             output = proc.stdout.decode(self.env.config["encoding"])
-            self.env.vars[self.assignment_var] = assigned_value = output.rstrip('\r\n')
+            assigned_value = output.rstrip('\r\n')
+            self.env.vars[self.assignment_var] = convert_boolean_from_input(assigned_value)
             hint = ' (trailing newline removed)' if (output.endswith('\n') or output.endswith('\r')) else ''
-            self.env.LOG.info(f'Variable {self.assignment_var} = "{assigned_value}"{hint}')
+            self.env.LOG.info(f'Variable {self.assignment_var} = "{self.env.vars[self.assignment_var]}"{hint}')
         else:
             proc = subprocess.run(
                 cmd,
