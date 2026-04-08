@@ -1,4 +1,7 @@
 # Changelog
+# 3.2.1
+ - Add conversion of boolean strings to booleans
+
 
 # 3.2.0
  - Added check for dangerous var values
