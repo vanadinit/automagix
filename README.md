@@ -282,9 +282,11 @@ You can refer to these systems in the command pipeline in multiple ways:
    object (Bundlewrap nodes only, no groups)
 
 **vars** _(associative array)_
-: Define some vars. These are accessible in the command pipeline via
- {varname}. Note: Only valid Python variable names are allowed.
- In python actions you can access these variables directly via `VARS.varname`.
+: Define some vars. Note: Only valid Python variable names are allowed.
+ To specify a variable type use `type|varname` where *type* is
+ one of *int, float, bool, str* and varname the variable name.
+ These variables are accessible in the command pipeline via
+ {varname} (converted to *str*) and in python actions via `VARS.varname`.
 
 **secrets** _(associative array)_
 : Define teamvault secrets. Value has to be in this format:

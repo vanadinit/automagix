@@ -57,7 +57,7 @@ class ScriptFieldCompleter:
                 return []
 
             script = read_yaml(s_file)
-            completion = [f'{key}=' for key in script.get(action.dest, {}).keys()]
+            completion = [f'{key.split("|", maxsplit=1)[-1]}=' for key in script.get(action.dest, {}).keys()]
 
             return completion
         except Exception as exc:
