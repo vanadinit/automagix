@@ -12,18 +12,6 @@ from .parallel_runner import run_parallel_screens
 from .progress_bar import setup_scroll_area, destroy_scroll_area
 
 
-def check_for_original_automagix():
-    p = subprocess.run('pip list | grep automagix', shell=True, stdout=subprocess.PIPE)
-
-    for line in p.stdout.decode().split('\n'):
-        if line.strip().split(' ', maxsplit=1)[0].strip() == 'automagix_cmd':
-            raise Exception(
-                'This package MUST NOT be installed along with the "automagix_cmd" package.'
-                ' Both packages use the same entry point and module names and therefore'
-                ' are conflicting. Please uninstall automagix AND automagix_cmd first,'
-                ' THEN reinstall the package you want to use!')
-
-
 def run_startup_script():
     if not CONFIG.get('startup_script'):
         return
@@ -64,8 +52,6 @@ def check_screen():
 
 
 def main():
-    check_for_original_automagix()
-
     if os.getenv('AUTOMAGIX_SHELL'):
         print('You are running Automagix from an interactive shell of an already running Automagix!')
         empty_queued_input_data()

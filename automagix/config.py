@@ -174,7 +174,13 @@ def _overwrite(script: dict, key: str, data: list[str]):
 
 
 def _tupelize(string) -> tuple:
-    return tuple([int(i) for i in string.split('.')])
+    result = []
+    for i in string.split('.'):
+        try:
+            result.append(int(i))
+        except ValueError:
+            result.append(str(i))
+    return tuple(result)
 
 
 def get_script_path(name: str):
@@ -373,18 +379,26 @@ def update_script_from_row(row: dict, script: dict, index: int):
     script['name'] += f" ({' | '.join(ids)})"
 
     for key, value in row.items():
-        assert len(key.split(':')) == 2, \
-            'First row in CSV must contain "label" or the field name and key seperated by colons' \
-            ' like "label,systems:mysystem,vars:myvar".'
+        if len(key.split(':')) != 2:
+            raise ValidationError(
+                'First row in CSV must contain "label" or the field name and key seperated by colons'
+                ' like "label,systems:mysystem,vars:myvar".')
+
         key_type, key_name = key.split(':')
-        assert key_type in SCRIPT_FIELDS.keys(), \
-            f'First row in CSV: Field name is \'{key_type}\', but has to be one of {list(SCRIPT_FIELDS.keys())}.'
+        if key_type not in SCRIPT_FIELDS.keys():
+            raise ValidationError(
+                f'First row in CSV: Field name is \'{key_type}\','
+                f' but has to be one of {list(SCRIPT_FIELDS.keys())}.')
+
         script[key_type][key_name] = convert_boolean_from_input(value=value)
 
-def convert_boolean_from_input(value: str) -> bool | str: #Convert "true"/"false" strings to boolean, leave everything else as is.
+
+def convert_boolean_from_input(value: str) -> bool | str:
+    """Convert "true"/"false" strings to boolean, leave everything else as is."""
     if isinstance(value, str) and value.lower() in ('false', 'true'):
         return value.lower() == 'true'
     return value
+
 
 class UnknownSecretTypeException(Exception):
     pass

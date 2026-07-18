@@ -29,8 +29,7 @@ def test__overwrite():
 
 def test__tupelize():
     assert _tupelize('1.2.3.4') == (1, 2, 3, 4)
-    with tc.assertRaises(ValueError):
-        _tupelize('4.7.dev32')
+    assert _tupelize('4.7.dev32') == (4, 7, 'dev32')
 
 
 def test__check_deprecated_syntax__dict(caplog):
