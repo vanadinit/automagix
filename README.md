@@ -1,4 +1,7 @@
-# automatix
+### This project is still under construction ###
+
+# automagix
+Automatix - Fork (https://github.com/seibert-media/automatix)
 Automation wrapper for bash and python commands. Extended Features version.
 
 
