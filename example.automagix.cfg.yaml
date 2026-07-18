@@ -1,5 +1,5 @@
 # Path to scripts directory
-script_dir: '~/automatix_script_files'
+script_dir: '~/automagix_script_files'
 
 # Global constants for use in pipeline scripts
 constants:
@@ -24,7 +24,7 @@ logger: 'mylogger'
 logging_lib: 'mylib.logging'
 
 # Logfile directory for parallel processing
-logfile_dir: 'automatix_logs'
+logfile_dir: 'automagix_logs'
 
 # Bundlewrap support, bundlewrap has to be installed (default: false)
 bundlewrap: true
@@ -32,6 +32,6 @@ bundlewrap: true
 # Teamvault / Secret support, bundlewrap-teamvault has to be installed (default: false)
 teamvault: true
 
-# Startup script, which is triggered on every start of Automatix.
-# The whole Automatix call with all arguments is passed through as arguments.
-startup_script: '/some/path/bin/automatix_startup.sh'
+# Startup script, which is triggered on every start of Automagix.
+# The whole Automagix call with all arguments is passed through as arguments.
+startup_script: '/some/path/bin/automagix_startup.sh'

@@ -9,7 +9,7 @@ from .config import get_script
 from .environment import PipelineEnvironment
 
 
-class Automatix:
+class Automagix:
     def __init__(
             self,
             script: dict,
@@ -34,9 +34,9 @@ class Automatix:
     @cached_property
     def cmd_class(self) -> type:
         if self.env.config.get('bundlewrap'):
-            from .bundlewrap import BWCommand, AutomatixBwRepo
+            from .bundlewrap import BWCommand, AutomagixBwRepo
 
-            self.env.config['bw_repo'] = AutomatixBwRepo(repo_path=os.environ.get('BW_REPO_PATH', '.'))
+            self.env.config['bw_repo'] = AutomagixBwRepo(repo_path=os.environ.get('BW_REPO_PATH', '.'))
             return BWCommand
         else:
             return Command
@@ -181,5 +181,5 @@ class Automatix:
         self.execute_pipeline(name='cleanup')
 
         self.env.LOG.info('---------------------------------------------------------------')
-        self.env.LOG.info('Automatix finished: Congratulations and have a N.I.C.E. day :-)')
+        self.env.LOG.info('Automagix finished: Congratulations and have a N.I.C.E. day :-)')
         self.env.LOG.info('---------------------------------------------------------------')

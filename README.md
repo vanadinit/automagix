@@ -1,28 +1,27 @@
-### This project is still under construction ###
+### This project is under construction ###
 
 # automagix
-Automatix - Fork (https://github.com/seibert-media/automatix)
-Automation wrapper for bash and python commands. Extended Features version.
-
+Automation wrapper for bash and python commands. Extended Features version.  
+Fork of Automatix (https://github.com/seibert-media/automatix)
 
 # DESCRIPTION
 
-**automatix** is a wrapper for scripted sysadmin tasks. It offers
+**automagix** is a wrapper for scripted sysadmin tasks. It offers
  some useful functionality for easier scripting and having full
  control over the automated process.
 
-The idea of **automatix** is to write down all the commands you would
+The idea of **automagix** is to write down all the commands you would
  normally type to your commandline or python console into a YAML file.
- Then use **automatix** to execute these commands. 
+ Then use **automagix** to execute these commands. 
 
-There are different modes for **automatix** to work. Without any
- parameters automatix will try to execute the specified command
+There are different modes for **automagix** to work. Without any
+ parameters automagix will try to execute the specified command
  pipeline from the script file until an error occurs or the pipeline
  is done. The interactive mode (**-i**) asks for every single
  commandline step whether to execute, skip or abort.
  Forced mode (**-f**) will also proceed if errors occur.
 
-**automatix** was originally designed for internal Seibert Group use.
+**automagix** was originally designed for internal Seibert Group use.
  It comes therefore with bundlewrap and teamvault support as well as
  the possibility to use your own logging library.
 
@@ -32,39 +31,39 @@ Beware that this tool cannot substitute the system administrators
  brain and it needs a responsible handling, since you can do
  (and destroy) almost everything with it.
 
-**Automatix** evaluates YAML files and executes defined commands as
+**Automagix** evaluates YAML files and executes defined commands as
  shell or python commands. There is no check for harmful commands.
  Be aware that this can cause critical damage to your system.
 
 Please use the interactive mode and doublecheck commands before
- executing. Usage of automatix is at your own risk!
+ executing. Usage of automagix is at your own risk!
 
 
 # INSTALLATION
 
-Automatix requires Python &ge; 3.10.
+Automagix requires Python &ge; 3.10.
 
 ```
-pip install automatix
+pip install automagix
 ```
 
-NOTICE: original `automatix` and `automatix_cmd` share the
+NOTICE: original `automagix` and `automagix_cmd` share the
 same main entrypoint. To avoid overwriting and confusion,
 you should have only installed **ONE** of them!
 
 # CONFIGURATION
 
 You can specify a path to a configuration YAML file via the
- environment variable **AUTOMATIX_CONFIG**.
-Default location is "~/.automatix.cfg.yaml".
+ environment variable **AUTOMAGIX_CONFIG**.
+Default location is "~/.automagix.cfg.yaml".
 All (string) configuration values can be overwritten by the
  corresponding upper case environment variables preceeded
- by 'AUTOMATIX_', e.g. _AUTOMATIX_ENCODING_.
+ by 'AUTOMAGIX_', e.g. _AUTOMAGIX_ENCODING_.
 
-### Example: .automatix.cfg.yaml
+### Example: .automagix.cfg.yaml
 
     # Path to scripts directory
-    script_dir: '~/automatix_script_files'
+    script_dir: '~/automagix_script_files'
     
     # Global constants for use in pipeline scripts
     constants:
@@ -89,7 +88,7 @@ All (string) configuration values can be overwritten by the
     logging_lib: 'mylib.logging'
 
     # Logfile directory for parallel processing (ONLY for parallel processing!)
-    logfile_dir: 'automatix_logs'
+    logfile_dir: 'automagix_logs'
     
     # Bundlewrap support, bundlewrap has to be installed (default: false)
     bundlewrap: true
@@ -100,13 +99,13 @@ All (string) configuration values can be overwritten by the
     # Activate progress bar, python_progress_bar has to be installed (default: false)
     progress_bar: true
 
-    # Startup script, which is triggered on every start of Automatix.
-    # The whole Automatix call with all arguments is passed through as arguments.
-    startup_script: '/some/path/bin/automatix_startup.sh'
+    # Startup script, which is triggered on every start of Automagix.
+    # The whole Automagix call with all arguments is passed through as arguments.
+    startup_script: '/some/path/bin/automagix_startup.sh'
 
 # SYNOPSIS
 
-**automatix**
+**automagix**
       \[**--help**|**-h**\]
       \[**--systems** \[_SYSTEM1=ADDRESS_OR_NODENAME_ ...\]\]
       \[**--vars** \[_VAR1=VALUE1_ ...\]\]
@@ -148,7 +147,7 @@ All (string) configuration values can be overwritten by the
   teamvault is enabled)*  
   
 **--vars-file** _VARS_FILE_PATH_
-: Use this to specify a CSV file from where **automatix** reads
+: Use this to specify a CSV file from where **automagix** reads
   systems, variables and secrets. First row must contain the field
   types and names. You may also specify an `label` and `group` field.
   
@@ -197,7 +196,7 @@ All (string) configuration values can be overwritten by the
 
 ### EXAMPLE: Usage
 
-    automatix -i --systems source=sourcesystem.com target=targetsystem.org -- scriptfile.yaml
+    automagix -i --systems source=sourcesystem.com target=targetsystem.org -- scriptfile.yaml
 
 
 ## SCRIPTFILE
@@ -265,7 +264,7 @@ The **scriptfile** has to contain valid YAML.
 : Just a name for the process. Does not do anything.
 
 **require_version** _(string)_
-: The required Automatix version for this script to run. Similar to the
+: The required Automagix version for this script to run. Similar to the
  [Python version specifiers](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers).
  Multiple conditions can be separated by comma. Allowed operators are: "==","!=",">=" (default),"<=",">","<","~="
 
@@ -310,17 +309,17 @@ You can refer to these systems in the command pipeline in multiple ways:
 
 ### PIPELINE
 
-Here you define the commands automatix shall execute.
+Here you define the commands automagix shall execute.
 
 **KEY**: One of these possible command actions:
 
 1) **manual**: Some manual instruction for the user. The user has to
- confirm, that automatix may proceed.
+ confirm, that automagix may proceed.
 
 2) **local**: Local shell command to execute. The Bash specified 
  in `bash_path` (default: /bin/bash) will be used for execution.
  The environment is inherited with additional 
- **RUNNING_INSIDE_AUTOMATIX** set to 1.
+ **RUNNING_INSIDE_AUTOMAGIX** set to 1.
 
 3) **remote@systemname**: Remote shell command to execute. Systemname
  has to be a defined system. The command will be run via SSH (without
@@ -333,16 +332,16 @@ Here you define the commands automatix shall execute.
    * `PERSISTENT_VARS`, `PVARS`, `SkipBatchItemException`, `AbortException`
      are available, see corresponding sections in **TIPS & TRICKS** 
    * Notice that the variable `VARS` contains
-     the Automatix variables as a dictionary. `VARS` supports also
+     the Automagix variables as a dictionary. `VARS` supports also
      the attribute notation like `VARS.myvariable`. You can use it 
      to access or change the variables directly.
    * The path to the executed script file is available as `SCRIPT_FILE_PATH`.
    * You can refer to systems and constants via `SYSTEMS.systemname`
      and `CONST.constantname`.
    * If bundlewrap is enabled, the Bundlewrap repository object is
-     available via `AUTOMATIX_BW_REPO` and system node objects are
+     available via `AUTOMAGIX_BW_REPO` and system node objects are
      available via `NODES.systemname` (replace "systemname").
-     Use `AUTOMATIX_BW_REPO.reload()` to reinitialize the Bundlewrap 
+     Use `AUTOMAGIX_BW_REPO.reload()` to reinitialize the Bundlewrap 
      repository from the file system. This can be useful for using
      newly created nodes (e.g. remote commands).  
    
@@ -378,7 +377,7 @@ In most cases its a good idea to define your command in quotes to
 
 #### Escaping in Pipeline
 
-Because automatix uses Python's format() function:  
+Because automagix uses Python's format() function:  
 `{` -> `{{`  
 `}` ->  `}}`  
 
@@ -392,7 +391,7 @@ Standard YAML escapes (see also https://yaml.org/spec/1.2/spec.html):
 ### ALWAYS / CLEANUP PIPELINE
 
 Same usage as the 'normal' command pipeline, but will be executed
- every time at start of automatix (**always**) or at the end
+ every time at start of automagix (**always**) or at the end
  (**cleanup**) even if aborted (a). The commands are executed without
  --interactive flag, independend of the specified parameters.
 
@@ -405,18 +404,18 @@ Intended use case for **cleanup**: Remove temporary files or artifacts.
 
 ## ENVIRONMENT
 
-**AUTOMATIX_CONFIG**: Specify the path to the configuration file.
- Default is "~/.automatix.cfg.yaml".  
+**AUTOMAGIX_CONFIG**: Specify the path to the configuration file.
+ Default is "~/.automagix.cfg.yaml".  
 
-**AUTOMATIX_**_config-variable-in-upper-case_: Set or overwrite the 
+**AUTOMAGIX_**_config-variable-in-upper-case_: Set or overwrite the 
  corresponding configuration value. See **CONFIGURATION** section.
  Works only for string and boolean values!
  String values (case-insensitive 'true' or 'false') are converted
  to `True` or `False` in Python, if the fields expects a boolean.
  **All other values (int, float, dict, list, ...) are ignored!**
 
-**AUTOMATIX_TIME**: Set this to an arbitrary value to print the times
- for the single steps and the whole script, e.g. `AUTOMATIX_TIME=true`.
+**AUTOMAGIX_TIME**: Set this to an arbitrary value to print the times
+ for the single steps and the whole script, e.g. `AUTOMAGIX_TIME=true`.
 
 
 # TIPS & TRICKS
@@ -445,7 +444,7 @@ dictonary keys are also available as attributes.
 
 **Note: Following works ONLY with the shortcut "PVARS"**:
 
-You can use these variables also as condition or as normal automatix
+You can use these variables also as condition or as normal automagix
 variable in curly brackets by using the shortcut and the attribute notation:
     
       - python: PVARS.cond = some_function()
@@ -457,46 +456,46 @@ variable in curly brackets by using the shortcut and the attribute notation:
 
 ### Abort and Skip Exceptions
 
-To abort the current automatix and jump to the next batch item you can
- raise the `SkipBatchItemException`. For aborting the whole automatix
+To abort the current automagix and jump to the next batch item you can
+ raise the `SkipBatchItemException`. For aborting the whole automagix
  process raise `AbortException(return_code: int)`. In both cases the
  cleanup pipeline is executed. Same is the case for selecting
  `a`:abort or `c`:continue when asked (interactive or error).
 
 ### Logging / Saving the output
 
-**automatix** offers no own capability to log the output to a log file or
+**automagix** offers no own capability to log the output to a log file or
  save it otherwise.  
 
 If you have _GNU screen_ installed, you may start a screen session with
- `-L` and optional `-Logfile LOGFILE` in which you start **automatix**.
+ `-L` and optional `-Logfile LOGFILE` in which you start **automagix**.
  (This is how it works with "parallel processing", see **EXTRAS** section.)
 
-A different approach is to use `tee`, e.g. `automatix [script file + options] 2>&1 | tee auto.log`.
+A different approach is to use `tee`, e.g. `automagix [script file + options] 2>&1 | tee auto.log`.
  Different to the screen approach this seems not to capture your input.
 
 # BEST PRACTISES
 
-There are different ways to start scripting with **automatix**. The
+There are different ways to start scripting with **automagix**. The
  author's approach is mainly to consider the process and simply write
  down, what to do (manual steps for complex or not automated steps)
  and which commands to use.  
-Then start **automatix** in interactive mode (-i) and adjust the
+Then start **automagix** in interactive mode (-i) and adjust the
  single steps one by one. Replace manual steps, if suitable. Whenever
- adjustment is needed, abort, adjust and restart **automatix** with
+ adjustment is needed, abort, adjust and restart **automagix** with
  jump (-j) to the adjusted step.  
-From **automatix** 1.13.0 on you can use the reload scriptfile feature
+From **automagix** 1.13.0 on you can use the reload scriptfile feature
  instead. When asked for options (either because a command failed or
  you are in interactive mode) you can use **-R** to reload the
  scriptfile. If lines in the scriptfile have changed, or you need to
  repeat steps, you can use R+/-$number to reload and adjust the
- restart point (available since **automatix** 1.14.0). NOTICE: If using
+ restart point (available since **automagix** 1.14.0). NOTICE: If using
  vars-file, this reloads the script ONLY the active CSV row!
 
 Repeat this procedure to automate more and more and increase quality,
  whenever you feel like it.
 
-Consider to put often used paths or code sequences in automatix
+Consider to put often used paths or code sequences in automagix
  variables for better readability.  
 Do the same with variable content like URLs, to make it possible to
  overwrite it by command line options. Where ever possible prefer to
@@ -505,7 +504,7 @@ Do the same with variable content like URLs, to make it possible to
  things easier when using the script with different systems /
  parameters.
 
-Preferred way of using **automatix** is to put often used and complex
+Preferred way of using **automagix** is to put often used and complex
  algorithms in python libraries and import them. Advantage of this
  approach is that you can use your  implemented functions multiple
  times and build up a toolbox of nice functionality over time.
@@ -513,7 +512,7 @@ Preferred way of using **automatix** is to put often used and complex
 
 # NOTES
 
-**Manual steps** will always cause automatix to stop and wait for
+**Manual steps** will always cause automagix to stop and wait for
  user input.
 
 Be careful with **assignments** containing line breaks (echo, ...).
@@ -529,7 +528,7 @@ Because the **always** pipeline should not change anything, aborting
 If you want to abort the **pipeline** without triggering the
  **cleanup** pipeline, use CRTL+C.
 
-While **aborting remote functions** automatix is not
+While **aborting remote functions** automagix is not
  able to determine still running processes invoked by the function,
  because it only checks the processes for the commands (in this case
  the function name) which is called in the pipeline.
@@ -543,7 +542,7 @@ User input questions are of following categories:
 
 The terminal (T) answer starts an interactive Bash-Shell.
  Therefore .bashrc is executed, but the command prompt (PS1) is
- replaced to indicate, that we are still in an automatix process.
+ replaced to indicate, that we are still in an automagix process.
  
 
 # EXTRAS
@@ -551,15 +550,15 @@ The terminal (T) answer starts an interactive Bash-Shell.
 ## Parallel processing
 Requirement: GNU screen installed and accessible via `screen` command in bash.
 
-This **automatix** version has the option to process multiple **automatix** instances at a time.
+This **automagix** version has the option to process multiple **automagix** instances at a time.
  This is achieved by starting multiple [GNU screen](https://www.gnu.org/software/screen/) sessions.
  Please make yourself comfortable with the screen controls before using this feature to avoid getting lost.
 
 The main programm stays in a loop while attaching to the screen sessions and you will come back to it
- if you detach a screen session. The **automatix-manager** runs in its own screen session and is
- responsible for starting the automatix screens and status updates.
+ if you detach a screen session. The **automagix-manager** runs in its own screen session and is
+ responsible for starting the automagix screens and status updates.
 
-By default the programm starts with 10 parallel automatix instances. Use the main programm loop controls
+By default the programm starts with 10 parallel automagix instances. Use the main programm loop controls
  to change the number of allowed parallel sessions (pressing 'm' followed by your desired number).
 
 If you force the programm to terminate (e.g. keyboard interrupt, process kill, ...),
@@ -572,7 +571,7 @@ The screens write their output to log files in the specified **logfile_dir** (se
  experience (`more` or `less -r` worked for me).
 
 ## Bash completion (experimental)
-Automatix supports bash completion for parameters and the script directory via [argcomplete](https://github.com/kislyuk/argcomplete).
+Automagix supports bash completion for parameters and the script directory via [argcomplete](https://github.com/kislyuk/argcomplete).
 
 Therefor follow the installation instructions for argcomplete, which is at the current time
 
@@ -582,11 +581,11 @@ and either global activation via executing
 
     activate-global-python-argcomplete
 
-or activation for automatix (e.g. in `.bashrc`)
+or activation for automagix (e.g. in `.bashrc`)
 
-    eval "$(register-python-argcomplete automatix)"
+    eval "$(register-python-argcomplete automagix)"
 
-Automatix will recognize the installed module and offer the completion automatically.
+Automagix will recognize the installed module and offer the completion automatically.
 
 ## Progress bar (experimental)
 You can activate an "apt-like" progress bar based on the amount of commands
@@ -600,6 +599,6 @@ Note, that using commands that heavily modify the terminal behaviour/output
  or undesirable output. It might be a better idea to encourage the user
  to open a separate terminal and type these commands there.
 
-Using automatix itself as command should work, but may lead to confusing
+Using automagix itself as command should work, but may lead to confusing
  output as well. Note, that the progress bar will be overwritten by the
- new automatix instance for the duration of the automatix command.
+ new automagix instance for the duration of the automagix command.

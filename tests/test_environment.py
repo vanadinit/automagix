@@ -5,9 +5,9 @@ from time import sleep
 
 import pytest
 
-from automatix.automatix import Automatix
-from automatix.config import get_script, collect_vars, CONFIG, SCRIPT_FIELDS
-from automatix.logger import init_logger
+from automagix.automagix import Automagix
+from automagix.config import get_script, collect_vars, CONFIG, SCRIPT_FIELDS
+from automagix.logger import init_logger
 
 SELFDIR = dirname(abspath(__file__))
 
@@ -28,7 +28,7 @@ script = get_script(args=default_args)
 
 variables = collect_vars(script=script)
 
-testauto = Automatix(
+testauto = Automagix(
     script=script,
     variables=variables,
     config=CONFIG,

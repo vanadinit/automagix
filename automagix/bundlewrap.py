@@ -6,14 +6,14 @@ from bundlewrap.repo import Repository
 from .command import Command, PA
 
 
-class AutomatixBwRepo(Repository):
+class AutomagixBwRepo(Repository):
     def reload(self):
         self.__init__(repo_path=self.path)
 
 
 class BWCommand(Command):
     def _generate_python_vars(self):
-        locale_vars = {'AUTOMATIX_BW_REPO': self.env.config['bw_repo']}
+        locale_vars = {'AUTOMAGIX_BW_REPO': self.env.config['bw_repo']}
         for key, value in self.env.systems.items():
             if not value.startswith('hostname!'):
                 try:

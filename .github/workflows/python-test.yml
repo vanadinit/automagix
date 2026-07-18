@@ -54,14 +54,14 @@ jobs:
     - name: Integration tests with pytest and docker-compose
       run: |
         pytest -k "integration"
-    - name: Run github.yaml with Automatix
+    - name: Run github.yaml with Automagix
       run: |
-        screen -d -m -L -Logfile automatix_github.log automatix tests/github.yaml
+        screen -d -m -L -Logfile automagix_github.log automagix tests/github.yaml
         sleep 5
-    - name: Check Automatix output
+    - name: Check Automagix output
       run: |
-        cat automatix_github.log
-        grep 'github Test Automatix Script' automatix_github.log
-        grep '(0) \[local\]: echo "The system is nonexistent.com"' automatix_github.log
-        grep 'Test123nonexistent.comFalse' automatix_github.log
-        grep 'Skip command, because the condition is not met.' automatix_github.log
+        cat automagix_github.log
+        grep 'github Test Automagix Script' automagix_github.log
+        grep '(0) \[local\]: echo "The system is nonexistent.com"' automagix_github.log
+        grep 'Test123nonexistent.comFalse' automagix_github.log
+        grep 'Skip command, because the condition is not met.' automagix_github.log

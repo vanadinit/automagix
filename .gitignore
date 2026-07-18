@@ -1,7 +1,7 @@
-automatix_logs/
+automagix_logs/
 build/
 dist/
-.automatix.cfg.yaml
+.automagix.cfg.yaml
 *.egg-info/
 *__pycache__/
 *id_rsa_tests*

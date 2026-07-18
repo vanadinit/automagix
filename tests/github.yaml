@@ -1,4 +1,4 @@
-name: github Test Automatix Script
+name: github Test Automagix Script
 systems:
   just_a_system: nonexistent.com
 vars:

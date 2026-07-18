@@ -1,7 +1,10 @@
 # Changelog
+
+# 4.0.0 (not published yet)
+ - Fork and rename to Automagix: All variables, classes, etc are replaced
+
 # 3.2.1
  - Add conversion of boolean strings to booleans
-
 
 # 3.2.0
  - Added check for dangerous var values

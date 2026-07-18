@@ -6,7 +6,7 @@ from collections import defaultdict
 from tempfile import TemporaryDirectory
 from time import time
 
-from .batch_runner import create_automatix_list
+from .batch_runner import create_automagix_list
 from .config import LOG
 from .parallel import get_logfile_dir, get_screen_status_line
 from .parallel_ui import screen_switch_loop
@@ -42,24 +42,24 @@ def create_auto_files(script: dict, batch_items: list, args: Namespace, tempdir:
     digits = len(str(len(batch_groups) + len(default_group)))
 
     i = 1
-    # Create grouped automatix files for each "real" group
+    # Create grouped automagix files for each "real" group
     for i, (group, items) in enumerate(batch_groups.items(), start=1):
         write_auto_file(
             auto_id=str(i).rjust(digits, '0'),
-            autolist=create_automatix_list(script=script, batch_items=items, args=args),
+            autolist=create_automagix_list(script=script, batch_items=items, args=args),
             label=f'Group: {group}',
             tempdir=tempdir,
             logfile_dir=logfile_dir,
         )
 
-    # All rows/batch_items in the default group get their own automatix file and screen
+    # All rows/batch_items in the default group get their own automagix file and screen
     for j, batch_item in enumerate(default_group, start=i + 1):
         auto_id = str(j).rjust(digits, '0')
 
-        # Get label before create_automatix_list, where the label field is removed
+        # Get label before create_automagix_list, where the label field is removed
         label = batch_item.get('label', f'auto{auto_id}')
 
-        autolist = create_automatix_list(script=script, batch_items=[batch_item], args=args)
+        autolist = create_automagix_list(script=script, batch_items=[batch_item], args=args)
         write_auto_file(
             auto_id=auto_id,
             autolist=autolist,
@@ -75,12 +75,12 @@ def display_screen_control_hints():
                ' This takes you back to the information interface.')
     LOG.notice('- To scroll back in history press "<ctrl>+a Esc" to enable "copy mode". Switch back with "Esc".')
     LOG.notice('- You can modify this behaviour by screen configuration options (`~/.screenrc`).')
-    LOG.notice('- To suppress this message set the `AUTOMATIX_SUPPRESS_SCREEN_CONTROL_NOTICE` environment variable.')
+    LOG.notice('- To suppress this message set the `AUTOMAGIX_SUPPRESS_SCREEN_CONTROL_NOTICE` environment variable.')
     input('Press ENTER to continue...')
 
 
 def run_parallel_screens(script: dict, batch_items: list, args: Namespace):
-    LOG.info('Preparing automatix objects for parallel processing')
+    LOG.info('Preparing automagix objects for parallel processing')
 
     with TemporaryDirectory() as tempdir:
         time_id = round(time())
@@ -96,7 +96,7 @@ def run_parallel_screens(script: dict, batch_items: list, args: Namespace):
             'screen', '-d', '-m', '-S', f'{time_id}_overview',
             '-h', '100000',
             '-L', '-Logfile', f'{logfile_dir}/overview.log',
-            'automatix-manager', tempdir, str(time_id),
+            'automagix-manager', tempdir, str(time_id),
         ]
         if args.debug:
             cmds.append('--debug')
@@ -110,7 +110,7 @@ def run_parallel_screens(script: dict, batch_items: list, args: Namespace):
         LOG.info(f'Overview / manager screen started at "{time_id}_overview".')
 
         LOG.info('Start loop with information to switch between running screens.\n')
-        if not os.getenv('AUTOMATIX_SUPPRESS_SCREEN_CONTROL_NOTICE'):
+        if not os.getenv('AUTOMAGIX_SUPPRESS_SCREEN_CONTROL_NOTICE'):
             display_screen_control_hints()
 
         screen_switch_loop(tempdir=tempdir)
@@ -119,6 +119,6 @@ def run_parallel_screens(script: dict, batch_items: list, args: Namespace):
             print()
             LOG.info('Wait for overview to finish')
             for _ in fifo:
-                LOG.info('Automatix finished parallel processing')
+                LOG.info('Automagix finished parallel processing')
     LOG.info('Temporary directory cleaned up')
     LOG.info(f'All logfiles are available at {logfile_dir}')

@@ -21,4 +21,4 @@ Install `podman-compose` via pip and symlink the `docker` command to `podman`.
       StrictHostKeyChecking no
     
 
-* Run `make test` in the automatix root directory.
+* Run `make test` in the automagix root directory.

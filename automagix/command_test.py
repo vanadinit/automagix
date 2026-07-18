@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from automatix.command import Command, parse_key
+from automagix.command import Command, parse_key
 from tests.test_environment import environment, run_command_and_check, ssh_up  # noqa: F401
 
 
@@ -75,7 +75,7 @@ def test__execute_local_with_condition(capfd):
         cmd.execute()
 
         out, err = capfd.readouterr()
-        assert condition_out == ('automatix' in out)
+        assert condition_out == ('automagix' in out)
         assert err == ''
 
 
@@ -123,7 +123,7 @@ def test__execute_python_cmd__assignment():
 
 def test__get_python_locale_vars():
     cmd = Command(cmd={'a=python': '5-3'}, index=2, pipeline='pipeline', env=deepcopy(environment), position=1)
-    assert id(cmd.env.vars) == id(cmd._get_python_globals()['VARS']), 'Automatix variables have been overwritten!'
+    assert id(cmd.env.vars) == id(cmd._get_python_globals()['VARS']), 'Automagix variables have been overwritten!'
 
 
 def test__parse_key():

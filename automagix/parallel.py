@@ -7,7 +7,7 @@ from os.path import isfile
 from pathlib import Path
 from time import sleep, strftime, gmtime
 
-from .batch_runner import run_automatix_list
+from .batch_runner import run_automagix_list
 from .colors import yellow, green, red, cyan
 from .config import LOG, init_logger, CONFIG
 from .helpers import FileWithLock
@@ -119,7 +119,7 @@ def run_manage_loop(tempdir: str, time_id: int):
                     'screen', '-d', '-m', '-S', session_name,
                     '-h', '100000',
                     '-L', '-Logfile', logfile_path,
-                    'automatix-from-file', tempdir, str(time_id), auto_file
+                    'automagix-from-file', tempdir, str(time_id), auto_file
                 ])
                 subprocess.run(['screen', '-S', session_name, '-X', 'hardstatus', 'alwayslastline'])
                 subprocess.run(['screen', '-S', session_name, '-X', 'hardstatus', 'string', status_line])
@@ -145,8 +145,8 @@ def run_manage_loop(tempdir: str, time_id: int):
 
 def run_manager():
     parser = argparse.ArgumentParser(
-        description='Automatix manager for parallel processing (called by the automatix main programm)',
-        epilog='Explanations and README at https://github.com/vanadinit/automatix',
+        description='Automagix manager for parallel processing (called by the automagix main programm)',
+        epilog='Explanations and README at https://github.com/vanadinit/automagix',
     )
     parser.add_argument('tempdir')
     parser.add_argument('time_id')
@@ -171,7 +171,7 @@ def run_auto(tempdir: str, time_id: int, auto_file: str):
     with open(auto_path, 'rb') as f:
         auto_file_data = pickle.load(file=f)
     try:
-        run_automatix_list(automatix_list=auto_file_data['autolist'], send_status_callback=send_status)
+        run_automagix_list(automagix_list=auto_file_data['autolist'], send_status_callback=send_status)
     finally:
         send_status('finished')
         unlink(auto_path)
@@ -179,8 +179,8 @@ def run_auto(tempdir: str, time_id: int, auto_file: str):
 
 def run_auto_from_file():
     parser = argparse.ArgumentParser(
-        description='Automatix from file for parallel processing (called by the automatix-manager)',
-        epilog='Explanations and README at https://github.com/vanadinit/automatix',
+        description='Automagix from file for parallel processing (called by the automagix-manager)',
+        epilog='Explanations and README at https://github.com/vanadinit/automagix',
     )
     parser.add_argument('tempdir')
     parser.add_argument('time_id')

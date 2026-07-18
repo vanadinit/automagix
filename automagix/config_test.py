@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from automatix.config import _overwrite, _tupelize, check_deprecated_syntax, check_version, VersionError
+from automagix.config import _overwrite, _tupelize, check_deprecated_syntax, check_version, VersionError
 
 tc = TestCase()
 
@@ -58,7 +58,7 @@ def test__check_deprecated_syntax__a_vars(caplog):
     assert '[pipeline:7] Using "a_vars["myvar"]" does not work any longer. Use "VARS.myvar" instead.' in caplog.text
 
 
-@patch('automatix.config.VERSION', '2.1.5')
+@patch('automagix.config.VERSION', '2.1.5')
 def test__check_version__pass():
     check_version('==2.1.5')
     check_version('2.1.5')
@@ -72,7 +72,7 @@ def test__check_version__pass():
     check_version('~=2')
 
 
-@patch('automatix.config.VERSION', '2.1.5')
+@patch('automagix.config.VERSION', '2.1.5')
 def test__check_version__fail():
     with tc.assertRaises(VersionError):
         check_version('<2.0.0')

@@ -1,7 +1,7 @@
-# All values in this file (except Automatix's own control structures) should be strings!
-name: Automatix Test  # Just give it a name.
+# All values in this file (except Automagix's own control structures) should be strings!
+name: Automagix Test  # Just give it a name.
 # Here it might be good practice to give some type of usage information as comment, like
-# USAGE: automatix tests/test.yaml
+# USAGE: automagix tests/test.yaml
 required_version: '~=2.5'  # Allowed operators are '==', '!=', '>=', '<=', '>', '<', '~='
 systems:
   # To avoid unexpected behaviour
@@ -29,7 +29,7 @@ always:  # <-- The always pipeline is executed even if you just want to print th
   - local: scp tests/test.sh {SYSTEMS.testsystem}:/tmp/test.sh
 pipeline:
   - python: PVARS.moin = True  # We can also use the PERSISTENT_VARS shortcut PVARS to save variables for later use.
-  - PVARS.moin?local: echo 'Moin'  # Instead of an Automatix variable, we can also use PVARS (only shortcut) in conditions.
+  - PVARS.moin?local: echo 'Moin'  # Instead of an Automagix variable, we can also use PVARS (only shortcut) in conditions.
   - python: PVARS.moin = False
   - PVARS.moin!?local: echo 'Moin Moin :-)'  # Conditions can be inverted by '!?' instead of '?'.
   - a=python: re.match(r'\d*', '12345')  # Another import check and a "normal" variable assertion, but wait 'a' is now a match object.
@@ -52,13 +52,13 @@ pipeline:
   # Following is how you can check things in Bash.
   # The test fails and therefore we have an empty output.
   # This is desired because every string but an empty one would lead to True.
-  # The 'exit 0' is necessary, because otherwise Automatix would stop thinking there is an error (non-zero exitcode).
+  # The 'exit 0' is necessary, because otherwise Automagix would stop thinking there is an error (non-zero exitcode).
   - cond2=local: test "confluence" == "jira" && echo -n "True"; exit 0
   - cond2?python: print('Das ging wohl daneben 2')  # So this is not printed.
-  - python: raise Exception('moin')  # And here Automatix will stop and ask, because an exception occurred in our code.
+  - python: raise Exception('moin')  # And here Automagix will stop and ask, because an exception occurred in our code.
 
 # --- Variables magic ---
-  # 1) Automatix Variable
+  # 1) Automagix Variable
   - a=python: '5' # Notice: This is a YAML string, but as Python command it becomes an integer.
   # is equivalent to
   - python: VARS.a = 5

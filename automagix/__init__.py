@@ -12,15 +12,15 @@ from .parallel_runner import run_parallel_screens
 from .progress_bar import setup_scroll_area, destroy_scroll_area
 
 
-def check_for_original_automatix():
-    p = subprocess.run('pip list | grep automatix', shell=True, stdout=subprocess.PIPE)
+def check_for_original_automagix():
+    p = subprocess.run('pip list | grep automagix', shell=True, stdout=subprocess.PIPE)
 
     for line in p.stdout.decode().split('\n'):
-        if line.strip().split(' ', maxsplit=1)[0].strip() == 'automatix_cmd':
+        if line.strip().split(' ', maxsplit=1)[0].strip() == 'automagix_cmd':
             raise Exception(
-                'This package MUST NOT be installed along with the "automatix_cmd" package.'
+                'This package MUST NOT be installed along with the "automagix_cmd" package.'
                 ' Both packages use the same entry point and module names and therefore'
-                ' are conflicting. Please uninstall automatix AND automatix_cmd first,'
+                ' are conflicting. Please uninstall automagix AND automagix_cmd first,'
                 ' THEN reinstall the package you want to use!')
 
 
@@ -38,7 +38,7 @@ def setup(args: argparse.Namespace) -> float:
     init_logger(name=CONFIG['logger'], debug=args.debug)
     starttime = time()
 
-    LOG.info(f'Automatix Version {VERSION}')
+    LOG.info(f'Automagix Version {VERSION}')
     LOG.info(f'Started at: {strftime("%a, %d %b %Y %H:%M:%S UTC", gmtime(starttime))}')
 
     configfile = CONFIG.get('config_file')
@@ -64,10 +64,10 @@ def check_screen():
 
 
 def main():
-    check_for_original_automatix()
+    check_for_original_automagix()
 
-    if os.getenv('AUTOMATIX_SHELL'):
-        print('You are running Automatix from an interactive shell of an already running Automatix!')
+    if os.getenv('AUTOMAGIX_SHELL'):
+        print('You are running Automagix from an interactive shell of an already running Automagix!')
         empty_queued_input_data()
         answer = input('Do you really want to proceed? Then type "yes" and ENTER.\n')
         if answer != 'yes':
@@ -105,5 +105,5 @@ def main():
         if CONFIG['progress_bar']:
             destroy_scroll_area()
 
-    if 'AUTOMATIX_TIME' in os.environ:
-        LOG.info(f'The Automatix script took {round(time() - starttime)}s!')
+    if 'AUTOMAGIX_TIME' in os.environ:
+        LOG.info(f'The Automagix script took {round(time() - starttime)}s!')

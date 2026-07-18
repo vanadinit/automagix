@@ -92,7 +92,7 @@ def handle_exit(exc: Exception) -> str:
 def draw_status(cw: CursesWriter, autos: Autos):
     cw.clear()
 
-    cw.add_text(f'Automatix Status (max parallel: {autos.max_parallel})')
+    cw.add_text(f'Automagix Status (max parallel: {autos.max_parallel})')
     cw.add_text('-' * (cw.w - 2))
 
     cw.add_text('waiting: ')

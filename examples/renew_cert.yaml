@@ -1,5 +1,5 @@
 name: Script to renew certificate with acme-tiny
-# Usage: automatix renew_cert.yaml --systems server=ip-or-hostname.com --vars port_handling='' domain=mydomain.org services='nginx postfix dovecot'
+# Usage: automagix renew_cert.yaml --systems server=ip-or-hostname.com --vars port_handling='' domain=mydomain.org services='nginx postfix dovecot'
 systems:
   server: ip-or-hostname.com
 vars:

@@ -1,5 +1,5 @@
 name: Script to convert all audio files of a directory to mp3
-# Usage: automatix convert_mp3.yaml --vars directory="/some/directory" 
+# Usage: automagix convert_mp3.yaml --vars directory="/some/directory" 
 vars:
   directory: PATH_TO_DIRECTORY
 pipeline:

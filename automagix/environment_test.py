@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from automatix.environment import AttributedDict, AttributedDummyDict
+from automagix.environment import AttributedDict, AttributedDummyDict
 
 tc = TestCase()
 

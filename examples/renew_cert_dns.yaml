@@ -1,5 +1,5 @@
 name: Script to renew certificate via DNS (netcup) with lego
-# Usage: automatix renew_cert.yaml --systems server=ip-or-hostname.com services='nginx postfix dovecot' domain=mydomain.org email=me@example.com
+# Usage: automagix renew_cert.yaml --systems server=ip-or-hostname.com services='nginx postfix dovecot' domain=mydomain.org email=me@example.com
 systems:
   server: ip-or-hostname.com
 vars:

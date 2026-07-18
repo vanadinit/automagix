@@ -48,7 +48,7 @@ class ConsoleFormatter(logging.Formatter):
         return formatted_record
 
 
-def init_logger(name: str = 'automatix', debug: bool = False):
+def init_logger(name: str = 'automagix', debug: bool = False):
     log = logging.getLogger(name=name)
     if log.hasHandlers():
         return

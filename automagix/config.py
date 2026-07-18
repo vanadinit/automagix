@@ -18,7 +18,7 @@ try:
 except ImportError:
     bash_completion = False
 
-VERSION = metadata.version('automatix')
+VERSION = metadata.version('automagix')
 
 DEPRECATED_SYNTAX = {
     # 0: REGEX pattern
@@ -37,13 +37,13 @@ SCRIPT_FIELDS['systems'] = 'Systems'
 SCRIPT_FIELDS['vars'] = 'Variables'
 
 CONFIG = {
-    'script_dir': '~/automatix-config',
+    'script_dir': '~/automagix-config',
     'constants': {},
     'encoding': 'utf-8',
     'bash_path': '/bin/bash',
     'ssh_cmd': 'ssh -t {hostname} sudo ',
-    'logger': 'automatix',
-    'logfile_dir': 'automatix_logs',
+    'logger': 'automagix',
+    'logfile_dir': 'automagix_logs',
     'bundlewrap': False,
     'teamvault': False,
     'progress_bar': False,
@@ -52,13 +52,13 @@ CONFIG = {
 
 MAGIC_SELECTION_INT = -999999999  # Some number nobody would normally type to mark that selection is wanted.
 
-configfile = os.path.expanduser(os.path.expandvars(os.getenv('AUTOMATIX_CONFIG', '~/.automatix.cfg.yaml')))
+configfile = os.path.expanduser(os.path.expandvars(os.getenv('AUTOMAGIX_CONFIG', '~/.automagix.cfg.yaml')))
 if os.path.isfile(configfile):
     CONFIG.update(read_yaml(configfile))
     CONFIG['config_file'] = configfile
 
 for c_key, c_value in CONFIG.items():
-    env_value = os.getenv(f'AUTOMATIX_{c_key.upper()}')
+    env_value = os.getenv(f'AUTOMAGIX_{c_key.upper()}')
     if not env_value:
         continue
 
@@ -70,7 +70,7 @@ for c_key, c_value in CONFIG.items():
         CONFIG[c_key] = env_value
         continue
 
-    print(red(f'Warning: environment variable "AUTOMATIX_{c_key.upper()}" ignored: wrong value type!'))
+    print(red(f'Warning: environment variable "AUTOMAGIX_{c_key.upper()}" ignored: wrong value type!'))
     sleep(2)
 
 if CONFIG.get('logging_lib'):
@@ -92,7 +92,7 @@ if CONFIG['teamvault']:
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description='Automation wrapper for bash and python commands.',
-        epilog='Explanations and README at https://github.com/seibert-media/automatix',
+        epilog='Explanations and README at https://github.com/seibert-media/automagix',
     )
     scriptfile_action = parser.add_argument(
         'scriptfile',

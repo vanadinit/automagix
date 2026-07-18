@@ -13,16 +13,16 @@ from .config import convert_boolean_from_input
 
 PERSISTENT_VARS = PVARS = AttributedDict()
 
-# Leading red " Automatix \w > " to indicate that this shell is inside a running Automatix execution
-AUTOMATIX_PROMPT = r'\[\033[0;31m\] Automatix \[\033[0m\]\\w > '
+# Leading red " Automagix \w > " to indicate that this shell is inside a running Automagix execution
+AUTOMAGIX_PROMPT = r'\[\033[0;31m\] Automagix \[\033[0m\]\\w > '
 
-AUTOMATIX_PYTHON_BANNER = """\
-Automatix Python Debugging Console
+AUTOMAGIX_PYTHON_BANNER = """\
+Automagix Python Debugging Console
 
 Same variables as in a python command are available, but locals() and globals() are not divided.
 Exit with `exit()` or Ctrl-D.
 """
-AUTOMATIX_PYTHON_EXITMSG = 'Exit Python Debugging Console.'
+AUTOMAGIX_PYTHON_EXITMSG = 'Exit Python Debugging Console.'
 
 KEYBOARD_INTERRUPT_MESSAGE = 'Abort command by user key stroke. Exit code is set to 130.'
 
@@ -204,7 +204,7 @@ class Command:
 
         return_code = self._execute_action()
 
-        if 'AUTOMATIX_TIME' in os.environ:
+        if 'AUTOMAGIX_TIME' in os.environ:
             print()
             self.env.LOG.info(f'(command execution time: {round(time() - steptime)}s)')
 
@@ -311,9 +311,9 @@ class Command:
                 print()
                 self.env.LOG.notice('Starting interactive terminal shell')
                 self._run_local_command(
-                    f'AUTOMATIX_SHELL=True'
+                    f'AUTOMAGIX_SHELL=True'
                     f' {self.bash_path}'
-                    f' --rcfile <(cat ~/.bashrc ; echo "PS1=\\"{AUTOMATIX_PROMPT}\\"")'
+                    f' --rcfile <(cat ~/.bashrc ; echo "PS1=\\"{AUTOMAGIX_PROMPT}\\"")'
                     f' -i'
                 )
 
@@ -327,7 +327,7 @@ class Command:
                 pyconsole_locals.update(self._get_python_locals())
 
                 pyconsole = InteractiveConsole(pyconsole_locals)
-                pyconsole.interact(banner=AUTOMATIX_PYTHON_BANNER, exitmsg=AUTOMATIX_PYTHON_EXITMSG)
+                pyconsole.interact(banner=AUTOMAGIX_PYTHON_BANNER, exitmsg=AUTOMAGIX_PYTHON_EXITMSG)
 
                 return self._ask_user_with_options(question=question, allowed_options=allowed_options)
             case PA.variables.answer:
@@ -394,7 +394,7 @@ class Command:
         except Exception as exc:
             if isinstance(exc, NameError) and not self.env.config.get('bundlewrap') and str(exc) in [
                 'name \'NODES\' is not defined',
-                'name \'AUTOMATIX_BW_REPO\' is not defined',
+                'name \'AUTOMAGIX_BW_REPO\' is not defined',
             ]:
                 self.env.LOG.exception(
                     'Seems you are trying to use bundlewrap functions without having bundlewrap support enabled.'
@@ -422,9 +422,9 @@ class Command:
 
     def _run_local_command(self, cmd: str) -> int:
         process_environment = os.environ.copy()
-        process_environment['RUNNING_INSIDE_AUTOMATIX'] = '1'
-        process_environment['AUTOMATIX_SCRIPT_LOCATION'] = str(self.env.script_file_path.parent)
-        process_environment['AUTOMATIX_SCRIPT_NAME'] = str(self.env.script_file_path.name)
+        process_environment['RUNNING_INSIDE_AUTOMAGIX'] = '1'
+        process_environment['AUTOMAGIX_SCRIPT_LOCATION'] = str(self.env.script_file_path.parent)
+        process_environment['AUTOMAGIX_SCRIPT_NAME'] = str(self.env.script_file_path.name)
         self.env.LOG.debug(f'Executing: {repr(cmd)} with environment {repr(process_environment)}')
         if self.assignment_var:
             proc = subprocess.run(
@@ -464,7 +464,7 @@ class Command:
 
     def _get_remote_command(self, hostname: str) -> str:
         ssh_cmd = self.env.config["ssh_cmd"].format(hostname=hostname)
-        return f'{ssh_cmd}{quote("RUNNING_INSIDE_AUTOMATIX=1 bash -c " + quote(self._build_command()))}'
+        return f'{ssh_cmd}{quote("RUNNING_INSIDE_AUTOMAGIX=1 bash -c " + quote(self._build_command()))}'
 
     def _remote_handle_keyboard_interrupt(self, hostname: str):
         ssh_cmd = self.env.config["ssh_cmd"].format(hostname=hostname)
@@ -477,11 +477,11 @@ class Command:
                 )
                 if len(ps_pids) > 1:
                     self.env.LOG.warning(
-                        'WARNING: Normally there should be at most 1 Automatix process on the system.'
+                        'WARNING: Normally there should be at most 1 Automagix process on the system.'
                         f' We found {len(ps_pids)} !!! \n\nThis might be a sign,'
                         ' that PID determination did nasty things and returned the wrong process IDs.'
                         ' Please double check the PIDs and proceed very carefully!\n\n'
-                        'If the determination is correct and you have other Automatix commands running in'
+                        'If the determination is correct and you have other Automagix commands running in'
                         ' parallel or in background, be aware that the signals chosen are sent to ALL'
                         ' identified processes. This is probably not what you want!'
                     )
@@ -512,7 +512,7 @@ class Command:
         self.env.LOG.info('Keystroke interrupt handled.\n')
 
     def get_remote_pids(self, hostname) -> list:
-        ps_cmd = "ps axu | grep RUNNING_INSIDE_AUTOMATIX | grep -v 'grep' | awk '{print $2}'"
+        ps_cmd = "ps axu | grep RUNNING_INSIDE_AUTOMAGIX | grep -v 'grep' | awk '{print $2}'"
         remote_ps_cmd = f'ssh {hostname} {quote(ps_cmd)} 2>&1'
         pids = subprocess.check_output(
             remote_ps_cmd,

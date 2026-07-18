@@ -8,7 +8,7 @@
 - Exception / error catching and interactive handling (retry, reload from file, jump forward/backward, skip, abort, terminal, change variable)
 - Beforehand (always) and cleanup commands
 
-- Assign Automatix variables from command output
+- Assign Automagix variables from command output
 - Keep python variables between commands (PERSISTENT_VARS, PVARS)
 - Conditions
 - Process multiple instances (defined in CSV file) sequentially or parallel (via GNU screen)

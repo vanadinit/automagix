@@ -4,15 +4,15 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='automatix',
-    version='3.2.1',
+    name='automagix',
+    version='4.0.0.dev1',
     description='Automation wrapper for bash and python commands',
     keywords=['bash', 'shell', 'command', 'automation', 'process', 'wrapper', 'devops', 'system administration'],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/seibert-media/automatix',
+    url='https://codeberg.org/vanadinit/automagix',
     author='Johannes Paul',
-    author_email='johannes.paul@seibert.group, vanadinit@quantentunnel.de',
+    author_email='vanadinit@quantentunnel.de',
     license='MIT',
     python_requires='>=3.10',
     install_requires=[
@@ -25,9 +25,9 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'automatix=automatix:main',
-            'automatix-manager=automatix.parallel:run_manager',
-            'automatix-from-file=automatix.parallel:run_auto_from_file',
+            'automagix=automagix:main',
+            'automagix-manager=automagix.parallel:run_manager',
+            'automagix-from-file=automagix.parallel:run_auto_from_file',
         ],
     },
     classifiers=[
