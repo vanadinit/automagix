@@ -203,6 +203,7 @@ def get_script(args: argparse.Namespace) -> dict:
 
     try:
         script = read_yaml(s_file)
+        collect_var_types(script)
         validate_script(script)
     except Exception:
         LOG.exception('Script validation failed! Please fix syntax before retrying!')
@@ -216,24 +217,25 @@ def get_script(args: argparse.Namespace) -> dict:
         exclude = script['_exclude'] = args.steps.startswith('e')
         script['_steps'] = {int(s) for s in (args.steps[1:] if exclude else args.steps).split(',')}
 
+    for field in SCRIPT_FIELDS.keys():
+        if vars(args).get(field):
+            _overwrite(script=script, key=field, data=vars(args)[field])
+
+    return script
+
+
+def collect_var_types(script: dict):
     script['_var_types'] = {}
     for variable_name in list(script.get('vars')):
         if match := re.match(r'(\w+)\|(.*)', variable_name):
             v_name = match.group(2)
             v_type = match.group(1)
             if v_type not in ['int', 'float', 'bool', 'str']:
-                LOG.error(f'[vars:{v_name}] Unknown type "{v_type}" not allowed.'
-                          f' Known types are "int", "float", "bool", "str".')
-                sys.exit(1)
+                raise ValidationError(f'[vars:{v_name}] Unknown type "{v_type}" not allowed.'
+                                      f' Known types are "int", "float", "bool", "str".')
             script['_var_types'][v_name] = v_type
             script['vars'][v_name] = script['vars'][variable_name]
             del script['vars'][variable_name]
-
-    for field in SCRIPT_FIELDS.keys():
-        if vars(args).get(field):
-            _overwrite(script=script, key=field, data=vars(args)[field])
-
-    return script
 
 
 def check_deprecated_syntax(ckey: str, entry: str, script: dict, prefix: str) -> int:

@@ -7,9 +7,8 @@ from shlex import quote
 from time import time
 
 from .colors import italic, yellow, green, red
-from .environment import PipelineEnvironment, AttributedDict, AttributedDummyDict
+from .environment import PipelineEnvironment, AttributedDict, AttributedDummyDict, ConversionError
 from .progress_bar import draw_progress_bar
-
 
 PERSISTENT_VARS = PVARS = AttributedDict()
 
@@ -125,7 +124,7 @@ class Command:
     def get_resolved_value(self, dummy: bool = False):
         if self.static:
             return self.value
-        
+
         variables = self.env.vars.copy()
         variables['CONST'] = ConstantsWrapper(self.env.config['constants'])
         variables['SYSTEMS'] = SystemsWrapper(self.env.systems)
@@ -138,7 +137,8 @@ class Command:
 
     def show_and_change_variables(self):
         print()
-        self.env.LOG.info(f'--- Variables (definded type: {italic(green("match"))} - {italic(red("mismatch"))} - {italic(yellow("undefined"))}) ---')
+        self.env.LOG.info(
+            f'--- Variables (definded type: {italic(green("match"))} - {italic(red("mismatch"))} - {italic(yellow("undefined"))}) ---')
         print()
         keylen = max([len(key) for key in self.env.vars.keys()])
         typelen = len(italic(yellow(''))) + 4
@@ -149,7 +149,7 @@ class Command:
             else:
                 colored_type = yellow(type_name)
 
-            self.env.LOG.info(f" {key:<{keylen+1}}:{italic(colored_type):<{typelen}} {value}")
+            self.env.LOG.info(f" {key:<{keylen + 1}}:{italic(colored_type):<{typelen}} {value}")
         print()
         self.env.LOG.info('To change/set variable write variable + "=" followed by value.')
         self.env.LOG.info('Example: var1=xyz')
@@ -170,6 +170,8 @@ class Command:
         except ValueError:
             if answer:
                 self.env.LOG.error('Input could not be parsed.')
+        except ConversionError as exc:
+            self.env.LOG.error(exc)
         self.print_command()
         print()
 

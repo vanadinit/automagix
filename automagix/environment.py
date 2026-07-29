@@ -93,15 +93,23 @@ class PipelineEnvironment:
             self.vars[key] = value
             return
 
-        match self.script['_var_types'][key]:
-            case 'int':
-                self.vars[key] = int(value)
-            case 'float':
-                self.vars[key] = float(value)
-            case 'bool':
-                if isinstance(value, str) and value.lower() == 'false':
-                    self.vars[key] = False
-                    return
-                self.vars[key] = bool(value)
-            case 'str':
-                self.vars[key] = str(value)
+        var_type = self.script['_var_types'][key]
+        try:
+            match var_type:
+                case 'int':
+                    self.vars[key] = int(value)
+                case 'float':
+                    self.vars[key] = float(value)
+                case 'bool':
+                    if isinstance(value, str) and value.lower() == 'false':
+                        self.vars[key] = False
+                        return
+                    self.vars[key] = bool(value)
+                case 'str':
+                    self.vars[key] = str(value)
+        except ValueError as exc:
+            raise ConversionError(f'Variable conversion failed: Could not convert {key}:"{value}" to {var_type}') from exc
+
+
+class ConversionError(Exception):
+    pass

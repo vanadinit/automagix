@@ -78,7 +78,7 @@ class Automagix:
         return command_list
 
     def reload_script(self):
-        self.script = get_script(args=self.env.cmd_args)
+        self.env.script = self.script = get_script(args=self.env.cmd_args)
         self._command_lists = {}  # Clear cache
 
     def print_main_data(self):
