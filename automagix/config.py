@@ -166,11 +166,7 @@ def _overwrite(script: dict, key: str, data: list[str]):
     script.setdefault(key, {})
     for item in data:
         k, v = item.split('=')
-        # Only convert booleans in vars, not in systems or secrets
-        if key == 'vars':
-            script[key][k] = convert_boolean_from_input(v)
-        else:
-            script[key][k] = v
+        script[key][k] = v
 
 
 def _tupelize(string) -> tuple:
@@ -378,22 +374,6 @@ def collect_vars(script: dict) -> dict:
                 var_dict[key] = bwtv.file(sid)
             else:
                 raise UnknownSecretTypeException(field)
-
-    for key, value in script.get('_var_types', {}).items():
-        match value:
-            case 'int':
-                var_dict[key] = int(var_dict[key])
-                LOG.info(f'Casting "{key}" to int')
-            case 'float':
-                var_dict[key] = float(var_dict[key])
-                LOG.info(f'Casting "{key}" to float')
-            case 'bool':
-                var_dict[key] = bool(var_dict[key])
-                LOG.info(f'Casting "{key}" to bool')
-            case 'str':
-                var_dict[key] = str(var_dict[key])
-                LOG.info(f'Casting "{key}" to str')
-
     return var_dict
 
 
@@ -418,15 +398,7 @@ def update_script_from_row(row: dict, script: dict, index: int):
             raise ValidationError(
                 f'First row in CSV: Field name is \'{key_type}\','
                 f' but has to be one of {list(SCRIPT_FIELDS.keys())}.')
-
-        script[key_type][key_name] = convert_boolean_from_input(value=value)
-
-
-def convert_boolean_from_input(value: str) -> bool | str:
-    """Convert "true"/"false" strings to boolean, leave everything else as is."""
-    if isinstance(value, str) and value.lower() in ('false', 'true'):
-        return value.lower() == 'true'
-    return value
+        script[key_type][key_name] = value
 
 
 class UnknownSecretTypeException(Exception):

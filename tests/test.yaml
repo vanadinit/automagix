@@ -12,6 +12,7 @@ systems:
 vars:
   myvar: huhu
   float|myvar2: 5
+  bool|mybool: False
 
 precommands: # only for main pipeline
   local: . tests/test.sh
@@ -56,6 +57,7 @@ pipeline:
   # The 'exit 0' is necessary, because otherwise Automagix would stop thinking there is an error (non-zero exitcode).
   - cond2=local: test "confluence" == "jira" && echo -n "True"; exit 0
   - cond2?python: print('Das ging wohl daneben 2')  # So this is not printed.
+  - mybool!?local: echo "This should be displayed"  # Boolean converted False string as condition
   - python: raise Exception('moin')  # And here Automagix will stop and ask, because an exception occurred in our code.
 
 # --- Variables magic ---

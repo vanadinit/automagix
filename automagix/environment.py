@@ -1,6 +1,7 @@
 from argparse import Namespace
 from logging import getLogger
 from pathlib import Path
+from typing import Any
 
 from .config import init_logger
 from .helpers import empty_queued_input_data
@@ -46,7 +47,10 @@ class PipelineEnvironment:
     ):
         self.config = config
         self.script = script
-        self.vars = AttributedDict(variables)
+        self.vars = AttributedDict()
+        for k, v in variables.items():
+            self.set_var(key=k, value=v)
+
         self.batch_index = batch_index
         self.cmd_args = cmd_args
 
@@ -83,3 +87,21 @@ class PipelineEnvironment:
         if progress_portion is not None and self.config['progress_bar']:
             draw_progress_bar(progress_portion)
         return answer
+
+    def set_var(self, key: str, value: Any) -> None:
+        if key not in self.script.get('_var_types', {}):
+            self.vars[key] = value
+            return
+
+        match self.script['_var_types'][key]:
+            case 'int':
+                self.vars[key] = int(value)
+            case 'float':
+                self.vars[key] = float(value)
+            case 'bool':
+                if isinstance(value, str) and value.lower() == 'false':
+                    self.vars[key] = False
+                    return
+                self.vars[key] = bool(value)
+            case 'str':
+                self.vars[key] = str(value)
