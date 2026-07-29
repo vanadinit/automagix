@@ -358,6 +358,11 @@ Here you define the commands automagix shall execute.
  string which evaluates to "True" in Python, but empty output will
  evaluate to "False". Use `!?` instead of `?` to invert the condition.
 
+**STATIC_FLAG**: If you do not want values to be replaced in your command,
+ you can suffix the command key with '-' to indicate a static command
+ value, e.g. `python-: f'{this} is not replaced'`. This is  especially
+ useful for Python commands which use curly brackets themselves.
+
 **VALUE**: Your command. Variables will be replaced with Python
  format function. Therefore, use curly brackets to refer to variables,
  systems, secrets and constants.
@@ -373,7 +378,7 @@ In most cases its a good idea to define your command in quotes to
 
 #### Escaping in Pipeline
 
-Because automagix uses Python's format() function:  
+Because automagix uses Python's format() function (not for static commands):  
 `{` -> `{{`  
 `}` ->  `}}`  
 

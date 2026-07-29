@@ -72,6 +72,11 @@ pipeline:
   # it can be used in the following ways:
   - PVARS.b?local: echo 'bool({PVARS.b}) is True so condition is met. Works for all types of commands.'
   - python: assert b == {PVARS.b} == PVARS.b
+  # 3) Static content
+  - python-: |
+      somevar = 'These curly brackets are not {automatically} replaced'
+      print(somevar)
+      print(somevar.format(automatically='Yay'))
 
 # --- Dirty Hacks ---
   # Inject a new system at runtime

@@ -81,6 +81,13 @@ class Command:
         for key, value in cmd.items():
             self.orig_key = key
             self.condition_var, self.assignment_var, self.key = parse_key(key=key)
+
+            if self.key.endswith('-'):
+                self.key = self.key[:-1]
+                self.static = True
+            else:
+                self.static = False
+
             if isinstance(value, dict):
                 # We need this workaround because the yaml lib returns a dictionary instead of a string,
                 # if there is nothing but a variable in the command. Alternative is to use quotes in the script yaml.
@@ -116,6 +123,9 @@ class Command:
         return 'localhost'
 
     def get_resolved_value(self, dummy: bool = False):
+        if self.static:
+            return self.value
+        
         variables = self.env.vars.copy()
         variables['CONST'] = ConstantsWrapper(self.env.config['constants'])
         variables['SYSTEMS'] = SystemsWrapper(self.env.systems)
