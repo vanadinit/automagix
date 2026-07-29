@@ -2,6 +2,7 @@
 
 # 4.0.0 (not published yet)
  - Fork and rename to Automagix: All variables, classes, etc are replaced
+ - Feature: Static commands
 
 # 3.2.1
  - Add conversion of boolean strings to booleans
