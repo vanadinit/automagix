@@ -47,10 +47,6 @@ Automagix requires Python &ge; 3.10.
 pip install automagix
 ```
 
-NOTICE: original `automagix` and `automagix_cmd` share the
-same main entrypoint. To avoid overwriting and confusion,
-you should have only installed **ONE** of them!
-
 # CONFIGURATION
 
 You can specify a path to a configuration YAML file via the
