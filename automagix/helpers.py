@@ -45,15 +45,13 @@ def selector(entries: List[tuple], message: str = 'Found multiple entries, pleas
 def search_script(name: str, script_dir: str, non_interactive: bool = False) -> str | None:
     paths: set[tuple[str, str]] = set()  # Second str is the label for the selector
     if isfile(name):
-        path = abspath(name)
-        paths.add((path, path))
-    for base in ['.', script_dir]:
-        for dirpath, dirnames, filenames in walk(base):
-            for filename in filenames:
-                if filename == name:
-                    path = str(abspath(join(dirpath, filename)))
-                    paths.add((path, path))
-    if non_interactive and not paths:
+        return abspath(name)
+    for dirpath, dirnames, filenames in walk(script_dir):
+        for filename in filenames:
+            if filename == name:
+                path = str(abspath(join(dirpath, filename)))
+                paths.add((path, path))
+    if not paths:
         raise NoSuchScriptError('Script not found')
     if non_interactive and len(paths) > 1:
         raise AmbiguousScriptError('Multiple scripts found')

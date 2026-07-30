@@ -185,6 +185,7 @@ def _tupelize(string) -> tuple:
 
 def get_script(args: argparse.Namespace) -> dict:
     s_file = search_script(name=args.scriptfile, script_dir=SCRIPT_DIR)
+    LOG.notice(f'Script found at {s_file}.')
 
     try:
         script = read_yaml(s_file)
