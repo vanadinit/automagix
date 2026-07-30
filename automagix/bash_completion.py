@@ -56,11 +56,9 @@ class ScriptFieldCompleter:
             completion = [f'{key}=' for key in script.get(action.dest, {}).keys()]
 
             return completion
-        except NoSuchScriptError:
-            warn('Script not found. Cannot complete.')
+        except (NoSuchScriptError, AmbiguousScriptError) as exc:
+            warn(f'{exc}. Cannot complete.')
             return []
-        except AmbiguousScriptError:
-            warn('Multiple scripts found. Cannot complete.')
         except Exception as exc:
             warn(f'Shell completion failed: {repr(exc)}')
             return []

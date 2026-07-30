@@ -1,10 +1,11 @@
-import os
+from os import walk, mkdir, rmdir
+from os.path import abspath, join, isfile
 from sys import stdin
+from termios import tcflush, TCIFLUSH
 from time import sleep
 from typing import List
 
 import yaml
-from termios import tcflush, TCIFLUSH
 
 yaml.warnings({'YAMLLoadWarning': False})
 
@@ -42,17 +43,20 @@ def selector(entries: List[tuple], message: str = 'Found multiple entries, pleas
 
 
 def search_script(name: str, script_dir: str, non_interactive: bool = False) -> str | None:
-    paths = set()
+    paths: set[tuple[str, str]] = set()  # Second str is the label for the selector
+    if isfile(name):
+        path = abspath(name)
+        paths.add((path, path))
     for base in ['.', script_dir]:
-        for dirpath, dirnames, filenames in os.walk(base):
+        for dirpath, dirnames, filenames in walk(base):
             for filename in filenames:
                 if filename == name:
-                    path = str(os.path.abspath(os.path.join(dirpath, filename)))
-                    paths.add((path, path))  # Second one is the label for the selector
+                    path = str(abspath(join(dirpath, filename)))
+                    paths.add((path, path))
     if non_interactive and not paths:
-        raise NoSuchScriptError()
+        raise NoSuchScriptError('Script not found')
     if non_interactive and len(paths) > 1:
-        raise AmbiguousScriptError()
+        raise AmbiguousScriptError('Multiple scripts found')
     return selector(entries=list(paths), message='Script found at multiple locations. Please choose:')
 
 
@@ -83,7 +87,7 @@ class FileWithLock:
 def get_lock(file_path: str):
     while True:
         try:
-            os.mkdir(f'{file_path}.lock')
+            mkdir(f'{file_path}.lock')
         except FileExistsError:
             sleep(1)
             continue
@@ -91,4 +95,4 @@ def get_lock(file_path: str):
 
 
 def release_lock(file_path: str):
-    os.rmdir(f'{file_path}.lock')
+    rmdir(f'{file_path}.lock')
