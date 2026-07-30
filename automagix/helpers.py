@@ -42,16 +42,26 @@ def selector(entries: List[tuple], message: str = 'Found multiple entries, pleas
 
 
 def search_script(name: str, script_dir: str, non_interactive: bool = False) -> str | None:
-    paths = []
+    paths = set()
     for base in ['.', script_dir]:
         for dirpath, dirnames, filenames in os.walk(base):
             for filename in filenames:
                 if filename == name:
-                    path = str(os.path.join(dirpath, filename))
-                    paths.append((path, path))  # Second one is the label for the selector
-    if non_interactive and len(paths) != 1:
-        return None
-    return selector(entries=paths, message='Script found at multiple locations. Please choose:')
+                    path = str(os.path.abspath(os.path.join(dirpath, filename)))
+                    paths.add((path, path))  # Second one is the label for the selector
+    if non_interactive and not paths:
+        raise NoSuchScriptError()
+    if non_interactive and len(paths) > 1:
+        raise AmbiguousScriptError()
+    return selector(entries=list(paths), message='Script found at multiple locations. Please choose:')
+
+
+class NoSuchScriptError(Exception):
+    pass
+
+
+class AmbiguousScriptError(Exception):
+    pass
 
 
 class FileWithLock:
