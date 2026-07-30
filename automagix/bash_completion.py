@@ -4,7 +4,7 @@ from argparse import Action, Namespace
 
 from argcomplete import warn
 
-from .helpers import read_yaml, search_script
+from .helpers import read_yaml, search_script, NoSuchScriptError, AmbiguousScriptError
 
 
 def _call(*args, **kwargs):
@@ -52,14 +52,13 @@ class ScriptFieldCompleter:
                 return []
 
             s_file = search_script(name=parsed_args.scriptfile, script_dir=self.script_dir, non_interactive=True)
-            if not s_file:
-                warn('Script not found or multiple options. Cannot complete.')
-                return []
-
             script = read_yaml(s_file)
             completion = [f'{key}=' for key in script.get(action.dest, {}).keys()]
 
             return completion
+        except (NoSuchScriptError, AmbiguousScriptError) as exc:
+            warn(f'{exc}. Cannot complete.')
+            return []
         except Exception as exc:
             warn(f'Shell completion failed: {repr(exc)}')
             return []

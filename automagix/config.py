@@ -183,27 +183,9 @@ def _tupelize(string) -> tuple:
     return tuple(result)
 
 
-def get_script_path(name: str):
-    s_file = name
-    LOG.debug(f'Scriptfile input: {s_file}')
-    # First try relative path
-    if not os.path.isfile(s_file):
-        LOG.debug('Script not found at relative path')
-        s_file = f'{SCRIPT_DIR}/{name}'
-    # Second try relative path from SCRIPT_DIR
-    if not os.path.isfile(s_file):
-        LOG.debug('Script not found at relative path from SCRIPT_DIR')
-        # Third search and offer selection
-        s_file = search_script(name=name, script_dir=SCRIPT_DIR)
-    if not s_file:
-        LOG.debug('Script not found at all.')
-        raise ValueError('Script not found')
-    LOG.notice(f'Script found at {s_file}.')
-    return s_file
-
-
 def get_script(args: argparse.Namespace) -> dict:
-    s_file = get_script_path(name=args.scriptfile)
+    s_file = search_script(name=args.scriptfile, script_dir=SCRIPT_DIR)
+    LOG.notice(f'Script found at {s_file}.')
 
     try:
         script = read_yaml(s_file)
