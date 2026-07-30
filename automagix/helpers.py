@@ -43,11 +43,12 @@ def selector(entries: List[tuple], message: str = 'Found multiple entries, pleas
 
 def search_script(name: str, script_dir: str, non_interactive: bool = False) -> str | None:
     paths = []
-    for dirpath, dirnames, filenames in os.walk(script_dir):
-        for filename in filenames:
-            if filename == name:
-                path = str(os.path.join(dirpath, filename))
-                paths.append((path, path))  # Second one is the label for the selector
+    for base in ['.', script_dir]:
+        for dirpath, dirnames, filenames in os.walk(base):
+            for filename in filenames:
+                if filename == name:
+                    path = str(os.path.join(dirpath, filename))
+                    paths.append((path, path))  # Second one is the label for the selector
     if non_interactive and len(paths) != 1:
         return None
     return selector(entries=paths, message='Script found at multiple locations. Please choose:')
