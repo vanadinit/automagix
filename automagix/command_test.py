@@ -143,18 +143,20 @@ def test__show_and_change_variables():
         'cond2': '{cond2}',
         'some_var': '{some_var}',
         'myvar2': 5.,
+        'mybool': False,
     }
 
     with mock.patch.object(
             cmd.env,
             'interact',
-            side_effect=['var1=xyz', 'myvar=hallo', ' cond2  =  !dgkls=432 \n\t  ']
+            side_effect=['var1=xyz', 'myvar=hallo', ' cond2  =  !dgkls=432 \n\t  ', 'mybool=a']
     ) as mock_interact:
         cmd.show_and_change_variables()
         cmd.show_and_change_variables()
         cmd.show_and_change_variables()
+        cmd.show_and_change_variables()
 
-    assert mock_interact.call_count == 3
+    assert mock_interact.call_count == 4
     assert cmd.env.vars == {
         'a': '{a}',
         'myvar': 'hallo',
@@ -163,4 +165,5 @@ def test__show_and_change_variables():
         'var1': 'xyz',
         'some_var': '{some_var}',
         'myvar2': 5.,
+        'mybool': True,
     }

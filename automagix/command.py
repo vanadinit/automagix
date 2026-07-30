@@ -137,8 +137,8 @@ class Command:
 
     def show_and_change_variables(self):
         print()
-        self.env.LOG.info(
-            f'--- Variables (definded type: {italic(green("match"))} - {italic(red("mismatch"))} - {italic(yellow("undefined"))}) ---')
+        legend = f'definded type: {italic(green("match"))} - {italic(red("mismatch"))} - {italic(yellow("undefined"))}'
+        self.env.LOG.info(f'--- Variables ({legend}) ---')
         print()
         keylen = max([len(key) for key in self.env.vars.keys()])
         typelen = len(italic(yellow(''))) + 4
