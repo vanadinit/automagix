@@ -6,10 +6,9 @@ from dataclasses import dataclass
 from shlex import quote
 from time import time
 
-from .colors import italic, yellow
-from .environment import PipelineEnvironment, AttributedDict, AttributedDummyDict
+from .colors import italic, yellow, green, red
+from .environment import PipelineEnvironment, AttributedDict, AttributedDummyDict, ConversionError
 from .progress_bar import draw_progress_bar
-from .config import convert_boolean_from_input
 
 PERSISTENT_VARS = PVARS = AttributedDict()
 
@@ -125,7 +124,7 @@ class Command:
     def get_resolved_value(self, dummy: bool = False):
         if self.static:
             return self.value
-        
+
         variables = self.env.vars.copy()
         variables['CONST'] = ConstantsWrapper(self.env.config['constants'])
         variables['SYSTEMS'] = SystemsWrapper(self.env.systems)
@@ -138,28 +137,41 @@ class Command:
 
     def show_and_change_variables(self):
         print()
-        self.env.LOG.info('Variables:')
+        self.env.LOG.info(
+            f'--- Variables (definded type: {italic(green("match"))} - {italic(red("mismatch"))} - {italic(yellow("undefined"))}) ---')
+        print()
         keylen = max([len(key) for key in self.env.vars.keys()])
         typelen = len(italic(yellow(''))) + 4
         for key, value in self.env.vars.items():
-            self.env.LOG.info(f" {key:<{keylen+1}}:{italic(yellow(type(value).__name__)):<{typelen}} {value}")
+            type_name = type(value).__name__
+            if key in self.env.script.get('_var_types'):
+                colored_type = green(type_name) if type_name == self.env.script['_var_types'][key] else red(type_name)
+            else:
+                colored_type = yellow(type_name)
+
+            self.env.LOG.info(f" {key:<{keylen + 1}}:{italic(colored_type):<{typelen}} {value}")
         print()
         self.env.LOG.info('To change/set variable write variable + "=" followed by value.')
         self.env.LOG.info('Example: var1=xyz')
         print()
         self.env.LOG.info('You can only change 1 variable at a time. Repeat if necessary.')
-        self.env.LOG.info('Notice: All values are strings here! Use python debugging shell '
-                          'and the VARS dictionary to assign values with other types.')
+        print()
+        self.env.LOG.info('Notice: All values are strings here by default!'
+                          ' If specified in the vars section the value will be converted.'
+                          ' Use Python debug console and the VARS dictionary to assign'
+                          ' values with other types or more complex operations.')
         print()
         self.env.LOG.info('To not change anything just press "ENTER".')
         answer = self.env.interact('\n', progress_portion=self.progress_portion)
         try:
             key, value = answer.split('=', maxsplit=1)
-            self.env.vars[key.strip()] = value.strip()
+            self.env.set_var(key=key.strip(), value=value.strip())
             self.env.LOG.info(f'Variable {key.strip()} = {value.strip()}')
         except ValueError:
             if answer:
                 self.env.LOG.error('Input could not be parsed.')
+        except ConversionError as exc:
+            self.env.LOG.error(exc)
         self.print_command()
         print()
 
@@ -446,9 +458,9 @@ class Command:
             )
             output = proc.stdout.decode(self.env.config["encoding"])
             assigned_value = output.rstrip('\r\n')
-            self.env.vars[self.assignment_var] = convert_boolean_from_input(assigned_value)
+            self.env.set_var(key=self.assignment_var, value=assigned_value)
             hint = ' (trailing newline removed)' if (output.endswith('\n') or output.endswith('\r')) else ''
-            self.env.LOG.info(f'Variable {self.assignment_var} = "{self.env.vars[self.assignment_var]}"{hint}')
+            self.env.LOG.info(f'Variable {self.assignment_var} = "{assigned_value}"{hint}')
         else:
             proc = subprocess.run(
                 cmd,

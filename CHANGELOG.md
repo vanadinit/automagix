@@ -1,16 +1,18 @@
 # Changelog
 
 # 4.0.0 (not published yet)
- - Fork and rename to Automagix: All variables, classes, etc are replaced
- - Feature: Static commands
+- Fork and rename to Automagix: All variables, classes, etc are replaced
+- Feature: Static commands
+- Feature: Option to specify and convert variable types
+- Removed: boolean strings, which have no variable type defined, are not converted automatically any longer
 
 # 3.2.1
- - Add conversion of boolean strings to booleans
+- Add conversion of boolean strings to booleans
 
 # 3.2.0
- - Added check for dangerous var values
- - Filtering comments in VARs file(CSV)
- - Fix: Shell completion now recursively searches from sub directories
+- Added check for dangerous var values
+- Filtering comments in VARs file(CSV)
+- Fix: Shell completion now recursively searches from sub directories
 
 # 3.1.0
 - Feature: Add AUTOMATIX_SCRIPT_LOCATION and AUTOMATIX_SCRIPT_NAME as environment variables for shell actions

@@ -53,7 +53,7 @@ class ScriptFieldCompleter:
 
             s_file = search_script(name=parsed_args.scriptfile, script_dir=self.script_dir, non_interactive=True)
             script = read_yaml(s_file)
-            completion = [f'{key}=' for key in script.get(action.dest, {}).keys()]
+            completion = [f'{key.split("|", maxsplit=1)[-1]}=' for key in script.get(action.dest, {}).keys()]
 
             return completion
         except (NoSuchScriptError, AmbiguousScriptError) as exc:

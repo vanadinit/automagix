@@ -282,9 +282,14 @@ You can refer to these systems in the command pipeline in multiple ways:
    object (Bundlewrap nodes only, no groups)
 
 **vars** _(associative array)_
-: Define some vars. These are accessible in the command pipeline via
- {varname}. Note: Only valid Python variable names are allowed.
- In python actions you can access these variables directly via `VARS.varname`.
+: Define some vars. Note: Only valid Python variable names are allowed.  
+ To specify a variable type use `type|varname` where *type* is
+ one of *int, float, bool, str* and varname the variable name.
+ Automatix will try to convert an assigned value to the specified type.
+ **Note**: For the boolean type the string "False" and upper/lower-case
+ variations are converted to `False` deviating from Python's normal behavior.  
+ Variables are accessible in the command pipeline via
+ {varname} (converted to *str*) and in python actions via `VARS.varname`.
 
 **secrets** _(associative array)_
 : Define teamvault secrets. Value has to be in this format:
@@ -347,8 +352,10 @@ Here you define the commands automagix shall execute.
  To do this prefix the desired variablename and = before the action
  key, e.g. `myvar=python: NODES.system.hostname`. Be careful when
  working with multiline statements. In **python** the first line is
- likely to set the variable. All variables will be converted to
- strings when used to build commands in following steps.
+ likely to set the variable.  
+ Only for **local** and **remote** action: If a variable type was
+ specified in the **vars** section, Automatix will also try to
+ convert the value here.
  
 **CONDITIONS**: You can define the command only to be executed if
  your condition variable evaluates to "True" in Python. To achieve

@@ -166,11 +166,7 @@ def _overwrite(script: dict, key: str, data: list[str]):
     script.setdefault(key, {})
     for item in data:
         k, v = item.split('=')
-        # Only convert booleans in vars, not in systems or secrets
-        if key == 'vars':
-            script[key][k] = convert_boolean_from_input(v)
-        else:
-            script[key][k] = v
+        script[key][k] = v
 
 
 def _tupelize(string) -> tuple:
@@ -189,6 +185,7 @@ def get_script(args: argparse.Namespace) -> dict:
 
     try:
         script = read_yaml(s_file)
+        collect_var_types(script)
         validate_script(script)
     except Exception:
         LOG.exception('Script validation failed! Please fix syntax before retrying!')
@@ -207,6 +204,20 @@ def get_script(args: argparse.Namespace) -> dict:
             _overwrite(script=script, key=field, data=vars(args)[field])
 
     return script
+
+
+def collect_var_types(script: dict):
+    script['_var_types'] = {}
+    for variable_name in list(script.get('vars')):
+        if match := re.match(r'(\w+)\|(.*)', variable_name):
+            v_name = match.group(2)
+            v_type = match.group(1)
+            if v_type not in ['int', 'float', 'bool', 'str']:
+                raise ValidationError(f'[vars:{v_name}] Unknown type "{v_type}" not allowed.'
+                                      f' Known types are "int", "float", "bool", "str".')
+            script['_var_types'][v_name] = v_type
+            script['vars'][v_name] = script['vars'][variable_name]
+            del script['vars'][variable_name]
 
 
 def check_deprecated_syntax(ckey: str, entry: str, script: dict, prefix: str) -> int:
@@ -371,15 +382,7 @@ def update_script_from_row(row: dict, script: dict, index: int):
             raise ValidationError(
                 f'First row in CSV: Field name is \'{key_type}\','
                 f' but has to be one of {list(SCRIPT_FIELDS.keys())}.')
-
-        script[key_type][key_name] = convert_boolean_from_input(value=value)
-
-
-def convert_boolean_from_input(value: str) -> bool | str:
-    """Convert "true"/"false" strings to boolean, leave everything else as is."""
-    if isinstance(value, str) and value.lower() in ('false', 'true'):
-        return value.lower() == 'true'
-    return value
+        script[key_type][key_name] = value
 
 
 class UnknownSecretTypeException(Exception):
