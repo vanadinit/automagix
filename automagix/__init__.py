@@ -11,7 +11,6 @@ from .helpers import empty_queued_input_data, selector
 from .parallel_runner import run_parallel_screens
 from .progress_bar import setup_scroll_area, destroy_scroll_area
 
-
 def run_startup_script():
     if not CONFIG.get('startup_script'):
         return

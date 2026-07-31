@@ -528,21 +528,24 @@ class Command:
                     subprocess.run(kill_cmd, shell=True)
 
                 ps_pids = self.get_remote_pids(hostname=hostname)
-        except subprocess.CalledProcessError:
-            self.env.LOG.warning('Could not check for remaining remote processes.')
+        except (subprocess.CalledProcessError, ValueError) as exc:
+            self.env.LOG.warning(f'Could not check for remaining remote processes. Caused by: {exc}')
 
         self.env.LOG.info('Keystroke interrupt handled.\n')
 
     def get_remote_pids(self, hostname) -> list:
         ps_cmd = "ps axu | grep RUNNING_INSIDE_AUTOMAGIX | grep -v 'grep' | awk '{print $2}'"
         remote_ps_cmd = f'ssh {hostname} {quote(ps_cmd)} 2>&1'
-        pids = subprocess.check_output(
+        output = subprocess.check_output(
             remote_ps_cmd,
             shell=True,
             executable=self.bash_path,
-        ).decode(self.env.config["encoding"]).split()
+        ).decode(self.env.config["encoding"])
 
-        return pids
+        try:
+            return [int(p) for p in output.split()]
+        except ValueError as exc:
+            raise ValueError(f'Output pids could not be parsed correctly. Output: {output}') from exc
 
 
 def parse_key(key) -> tuple[str, ...]:
