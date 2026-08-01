@@ -4,7 +4,8 @@
 - Fork and rename to Automagix: All variables, classes, etc are replaced
 - Feature: Static commands
 - Feature: Option to specify and convert variable types
-- Removed: boolean strings, which have no variable type defined, are not converted automatically any longer
+- Removed: boolean strings, which have no variable type defined, are not converted automatically anymore
+- Fix: Determination of still running remote processes, checks now for numeric PIDs 
 
 # 3.2.1
 - Add conversion of boolean strings to booleans
