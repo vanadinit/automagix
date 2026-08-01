@@ -82,7 +82,8 @@ class PipelineEnvironment:
             block_progress_bar(progress_portion)
         self.send_status('user_input_add')
         empty_queued_input_data()
-        answer = input(question)
+        print(question, end='')
+        answer = input()
         self.send_status('user_input_remove')
         if progress_portion is not None and self.config['progress_bar']:
             draw_progress_bar(progress_portion)
