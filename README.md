@@ -578,8 +578,8 @@ The screens write their output to log files in the specified **logfile_dir** (se
  You can use a pager that supports interpreting these sequences like the terminal to have a similar
  experience (`more` or `less -r` worked for me).
 
-## Bash completion (experimental)
-Automagix supports bash completion for parameters and the script directory via [argcomplete](https://github.com/kislyuk/argcomplete).
+## Shell completion (experimental)
+Automagix supports shell completion for parameters and the script directory via [argcomplete](https://github.com/kislyuk/argcomplete).
 
 Therefor follow the installation instructions for argcomplete, which is at the current time
 
@@ -589,7 +589,7 @@ and either global activation via executing
 
     activate-global-python-argcomplete
 
-or activation for automagix (e.g. in `.bashrc`)
+or activation for automagix (e.g. in `.bashrc` or `.zshrc`)
 
     eval "$(register-python-argcomplete automagix)"
 

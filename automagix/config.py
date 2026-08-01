@@ -12,11 +12,11 @@ from .helpers import read_yaml, search_script
 
 try:
     from argcomplete import autocomplete
-    from .bash_completion import ScriptFileCompleter, ScriptFieldCompleter
+    from .shell_completion import ScriptFileCompleter, ScriptFieldCompleter
 
-    bash_completion = True
+    shell_completion = True
 except ImportError:
-    bash_completion = False
+    shell_completion = False
 
 VERSION = metadata.version('automagix')
 
@@ -98,7 +98,7 @@ def create_parser() -> argparse.ArgumentParser:
         'scriptfile',
         help='Path to scriptfile (yaml), use " -- " if needed to delimit this from argument fields',
     )
-    if bash_completion:
+    if shell_completion:
         scriptfile_action.completer = ScriptFileCompleter(script_dir=SCRIPT_DIR)
 
     for field in SCRIPT_FIELDS.keys():
@@ -108,7 +108,7 @@ def create_parser() -> argparse.ArgumentParser:
             help=f'Use this to set {field} without adding them to the script or to overwrite them. '
                  f'You can specify multiple {field} like: --{field} v1=string1 v2=string2 v3=string3',
         )
-        if bash_completion:
+        if shell_completion:
             field_action.completer = ScriptFieldCompleter(script_dir=SCRIPT_DIR)
     parser.add_argument(
         '--vars-file',
@@ -153,7 +153,7 @@ def create_parser() -> argparse.ArgumentParser:
         action='store_true',
         help='activate debug log level',
     )
-    if bash_completion:
+    if shell_completion:
         autocomplete(parser)
     return parser
 
