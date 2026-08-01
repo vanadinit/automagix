@@ -8,6 +8,7 @@
 - Fix: Determination of still running remote processes, checks now for numeric PIDs
 - Fix: Input prompt for certain readline/terminal combinations
 - Fix: Rename bash completion -> shell completion
+- Switch setup.py -> pyproject.toml
 
 # 3.2.1
 - Add conversion of boolean strings to booleans

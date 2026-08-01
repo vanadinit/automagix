@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automagix"
+version = "4.0.0.dev2"
+description = "Automation wrapper for bash and python commands"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Johannes Paul", email = "vanadinit@quantentunnel.de" }
+]
+keywords = ["bash", "shell", "command", "automation", "process", "wrapper", "devops", "system administration"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "pyyaml>=5.1",
+]
+
+[project.urls]
+Homepage = "https://codeberg.org/vanadinit/automagix"
+
+[project.optional-dependencies]
+tests = ["cython<3.0.0", "pytest", "pytest-docker", "flake8"]
+shell_completion = ["argcomplete"]
+progress_bar = ["tqdm>=4.66.0"]
+
+[project.scripts]
+automagix = "automagix:main"
+automagix-manager = "automagix.parallel:run_manager"
+automagix-from-file = "automagix.parallel:run_auto_from_file"
