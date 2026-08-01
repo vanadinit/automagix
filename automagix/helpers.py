@@ -66,6 +66,13 @@ class AmbiguousScriptError(Exception):
     pass
 
 
+class JustDoNothing:
+    def __getattr__(self, name):
+        return lambda *args, **kwargs: None
+
+
+# --- File Locking ---
+
 class FileWithLock:
     def __init__(self, file_path: str, method: str):
         self.file_path = file_path
