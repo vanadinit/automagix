@@ -2,6 +2,7 @@ import shutil
 from time import time
 
 from tqdm import tqdm
+import signal
 
 
 class Cursor:
@@ -22,6 +23,10 @@ class Cursor:
         Cursor._print(f"\033[{lines}A")
 
     @staticmethod
+    def move_right(lines: int = 1):
+        Cursor._print(f"\033[{lines}C")
+
+    @staticmethod
     def move_to(row: int, col: int):
         Cursor._print(f"\033[{row};{col}f")
 
@@ -35,18 +40,22 @@ class Cursor:
         # Original code used 0, which most terminals treat as 1.
         Cursor._print(f"\033[{top};{bottom}r")
 
+    @staticmethod
+    def reset_scroll_region():
+        Cursor._print("\033[r")
+
 
 class TqdmProgressBar:
     def __init__(self):
         self.start_time = 0
+        self.last_percentage = 0
+        self.last_color = None
+        self.cursor_col = 0
+        self._orig_sigwinch_handler = None
 
-    def setup(self):
-        self.start_time = time()
+    def _update_scroll_region(self):
         cols, lines = shutil.get_terminal_size()
-
-        # We reserve the last line for the bar AND one empty line above it.
-        # Scroll region should be from line 1 to lines-2.
-        scroll_region_bottom = lines - 2
+        scroll_region_bottom = max(1, lines - 2)
 
         # Scroll down a bit to avoid visual glitch when the screen area shrinks by one row
         print("\n\n", end='', flush=True)
@@ -59,20 +68,29 @@ class TqdmProgressBar:
         Cursor.set_scroll_region(0, scroll_region_bottom)
 
         Cursor.restore()
+        Cursor.move_up(2)
+        Cursor.move_right(self.cursor_col)
 
-        # Move cursor up twice because we scrolled down twice?
-        # Actually, CODE_CURSOR_IN_SCROLL_AREA moves up 1 line.
-        # If we are at the bottom, and region ends at lines-2...
-        # Let's just restore and move up to be safe inside the region.
-        Cursor.move_up()
-        Cursor.move_up()
+        self.draw(percentage=self.last_percentage, color=self.last_color)
 
-        # Draw initial empty progress bar
-        self.draw(0)
+    def _on_resize(self, signum, frame):
+        self._update_scroll_region()
 
-    def draw(self, percentage: int | None, color: str = None):
+    def setup(self):
+        self.start_time = time()
+        self._update_scroll_region()
+
+        if hasattr(signal, "SIGWINCH"):
+            self._orig_sigwinch_handler = signal.signal(signal.SIGWINCH, self._on_resize)
+
+    def draw(self, percentage: int | None, color: str = None, cursor_col: int | None = None):
+        if cursor_col is not None:
+            self.cursor_col = cursor_col
         if percentage is None:
             return
+
+        self.last_percentage = percentage
+        self.last_color = color
 
         cols, lines = shutil.get_terminal_size()
 
@@ -108,33 +126,24 @@ class TqdmProgressBar:
 
         Cursor.restore()
 
-    def block(self, percentage: int | None):
-        self.draw(percentage, color='yellow')
+    def block(self, percentage: int | None, cursor_col: int | None = None):
+        self.draw(percentage, color='yellow', cursor_col=cursor_col)
 
     def destroy(self):
+        if hasattr(signal, "SIGWINCH") and self._orig_sigwinch_handler is not None:
+            signal.signal(signal.SIGWINCH, self._orig_sigwinch_handler)
+
         cols, lines = shutil.get_terminal_size()
 
-        Cursor.save()
+        # Scroll-Region aufheben
+        Cursor.reset_scroll_region()
 
-        # Reset scroll region (0 to lines -> full screen)
-        Cursor.set_scroll_region(0, lines)
-
-        Cursor.restore()
-        Cursor.move_up()
-        Cursor.move_up()
-
-        # We are done so clear the scroll bar and the separator line
-        Cursor.save()
-
-        # Clear bar line
-        Cursor.move_to(lines, 0)
+        # Untere Zeilen leeren
+        Cursor.move_to(lines - 1, 1)
+        Cursor.clear_line()
+        Cursor.move_to(lines, 1)
         Cursor.clear_line()
 
-        # Clear separator line
-        Cursor.move_to(lines - 1, 0)
-        Cursor.clear_line()
-
-        Cursor.restore()
-
-        # Scroll down a bit to avoid visual glitch when the screen area grows by one row
-        print("\n\n\n", end='', flush=True)
+        # Cursor sauber am Ende platzieren
+        Cursor.move_to(lines, 1)
+        print()

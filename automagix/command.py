@@ -303,7 +303,7 @@ class Command:
         formatted_options = options.format(bash_path=self.bash_path)
 
         return self._ask_user_with_options(
-            question=f'{question}\n{formatted_options}\nYour answer: \a',
+            question=f'{question}\n{formatted_options}\nYour answer: ',
             allowed_options=allowed_options,
         )
 
