@@ -2,7 +2,7 @@ import curses
 import os
 import shutil
 import signal
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 from time import time
 
 
@@ -46,7 +46,7 @@ class Cursor:
         Cursor._print("\033[r")
 
 
-class MetaProgressBar:
+class MetaProgressBar(ABCMeta):
     """Meta class for progress bars."""
 
     @abstractmethod
@@ -66,7 +66,7 @@ class MetaProgressBar:
         raise NotImplementedError
 
 
-class BasicProgressBar(MetaProgressBar):
+class BasicProgressBar(metaclass=MetaProgressBar):
     def __init__(self, rate_bar: bool = True):
         self.progress_clocked = False
         self.current_nr_lines = 0
@@ -186,7 +186,7 @@ class BasicProgressBar(MetaProgressBar):
         print('\n\n', end='')
 
 
-class TqdmProgressBar(MetaProgressBar):
+class TqdmProgressBar(metaclass=MetaProgressBar):
     def __init__(self):
         from tqdm import tqdm
         self.tqdm = tqdm
