@@ -1,8 +1,9 @@
+import curses
+import os
 import shutil
-from time import time
-
-from tqdm import tqdm
 import signal
+from abc import abstractmethod
+from time import time
 
 
 class Cursor:
@@ -45,8 +46,148 @@ class Cursor:
         Cursor._print("\033[r")
 
 
-class TqdmProgressBar:
+class MetaProgressBar:
+    """Meta class for progress bars."""
+
+    @abstractmethod
+    def setup(self):
+        raise NotImplemented
+
+    @abstractmethod
+    def draw(self, percentage: int | None, color: str | None = None, cursor_col: int | None = None):
+        raise NotImplemented
+
+    @abstractmethod
+    def block(self, percentage: int | None, cursor_col: int | None = None):
+        raise NotImplemented
+
+    @abstractmethod
+    def destroy(self):
+        raise NotImplemented
+
+
+class BasicProgressBar(MetaProgressBar):
+    def __init__(self, rate_bar: bool = True):
+        self.progress_clocked = False
+        self.current_nr_lines = 0
+        self.start_time = 0
+        self.rate_bar = rate_bar
+
+    @staticmethod
+    def _get_current_nr_lines():
+        stream = os.popen('tput lines')
+        output = stream.read()
+        return int(output)
+
+    @staticmethod
+    def _get_current_nr_cols():
+        stream = os.popen('tput cols')
+        output = stream.read()
+        return int(output)
+
+    @staticmethod
+    def __tput_el():
+        print(curses.tparm(curses.tigetstr("el")).decode(), end='')
+
+    @staticmethod
+    def __format_interval(t):
+        h_m, s = divmod(int(t), 60)
+        h, m = divmod(h_m, 60)
+        if h:
+            return f"{h:d}:{m:02d}:{s:02d}"
+        else:
+            return f"{m:02d}:{s:02d}"
+
+    def __prepare_r_bar(self, n):
+        elapsed = time() - self.start_time
+        elapsed_str = self.__format_interval(elapsed)
+
+        # Percentage/second rate (or second/percentage if slow)
+        rate = n / elapsed
+        inv_rate = 1 / rate if rate else None
+        rate_noinv_fmt = f"{f'{rate:5.2f}' if rate else '?'}pct/s"
+        rate_inv_fmt = f"{f'{inv_rate:5.2f}' if inv_rate else '?'}s/pct"
+        rate_fmt = rate_inv_fmt if inv_rate and inv_rate > 1 else rate_noinv_fmt
+
+        # Remaining time
+        remaining = (100 - n) / rate if rate else 0
+        remaining_str = self.__format_interval(remaining) if rate else "?"
+
+        r_bar = f"[{elapsed_str}<{remaining_str}, {rate_fmt}]"
+        return r_bar
+
+    def _print_bar_text(self, percentage, color):
+        colorstr = '\033[30m\033[43m' if color == 'yellow' else '\033[30m\033[42m'
+        cols = self._get_current_nr_cols()
+        if self.rate_bar:
+            r_bar = self.__prepare_r_bar(percentage)
+            bar_size = cols - 21 - len(r_bar)
+        else:
+            r_bar = ""
+            bar_size = cols - 20
+
+        complete_size = round((bar_size * percentage) / 100)
+        remainder_size = bar_size - complete_size
+        progress_bar = f"[{colorstr}{'#' * complete_size}\033[39m\033[49m{'.' * remainder_size}]"
+        percentage_str = ' 100' if percentage == 100 else f"{percentage:4.1f}"
+
+        print(f" Progress {percentage_str}% {progress_bar} {r_bar}\r", end='')
+
+    def _clear_progress_bar(self):
+        lines = self._get_current_nr_lines()
+        Cursor.save()
+        Cursor.move_to(lines, 0)
+        self.__tput_el()
+        Cursor.restore()
+
+    def setup(self):
+        self.start_time = time()
+
+        # Setup curses support (to get information about the terminal we are running in)
+        curses.setupterm()
+
+        self.current_nr_lines = self._get_current_nr_lines()
+        lines = self.current_nr_lines - 1
+
+        print('\n', end='')
+        Cursor.save()
+        Cursor.set_scroll_region(0, lines)
+        Cursor.restore()
+        Cursor.move_up()
+
+        self.draw(0)
+
+    def draw(self, percentage: int | None, color: str | None = None, cursor_col: int | None = None):
+        lines = self._get_current_nr_lines()
+        if lines != self.current_nr_lines:
+            self.setup()
+
+        Cursor.save()
+        Cursor.move_to(lines, 0)
+        self.__tput_el()
+        self.progress_clocked = False
+        self._print_bar_text(percentage, color)
+
+        Cursor.restore()
+
+    def block(self, percentage: int | None, cursor_col: int | None = None):
+        self.draw(percentage, color='yellow')
+
+    def destroy(self):
+        lines = self._get_current_nr_lines()
+        Cursor.save()
+        Cursor.set_scroll_region(0, lines)
+        Cursor.restore()
+        Cursor.move_up()
+        self._clear_progress_bar()
+
+        print('\n\n', end='')
+
+
+class TqdmProgressBar(MetaProgressBar):
     def __init__(self):
+        from tqdm import tqdm
+        self.tqdm = tqdm
         self.start_time = 0
         self.last_percentage = 0
         self.last_color = None
@@ -107,7 +248,7 @@ class TqdmProgressBar:
 
         # tqdm.format_meter generates the progress bar string
         # We subtract 1 from cols to avoid accidental wrapping at the very last character
-        bar_str = tqdm.format_meter(
+        bar_str = self.tqdm.format_meter(
             n=percentage,
             total=100,
             elapsed=elapsed,

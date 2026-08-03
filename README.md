@@ -92,8 +92,8 @@ All (string) configuration values can be overwritten by the
     # Teamvault / Secret support, bundlewrap-teamvault has to be installed (default: false)
     teamvault: true
 
-    # Activate progress bar, python_progress_bar has to be installed (default: false)
-    progress_bar: true
+    # Activate progress bar: "Basic" or "Tqdm", default "" (no progress bar)
+    progress_bar: Basic
 
     # Startup script, which is triggered on every start of Automagix.
     # The whole Automagix call with all arguments is passed through as arguments.
@@ -596,9 +596,11 @@ or activation for automagix (e.g. in `.bashrc` or `.zshrc`)
 Automagix will recognize the installed module and offer the completion automatically.
 
 ## Progress bar (experimental)
-You can activate an "apt-like" progress bar based on the amount of commands
- by installing tqdm (`pip install tqdm`) and setting the configuration
- option `progress_bar` to `True` (config file or environment).
+You can activate an "apt-like" progress bar based on the amount of commands.
+ There are two types of progress bars *Basic* and *Tqdm*, which can be activated
+ by setting the configuration option `progress_bar` to the corresponding value
+ (config file or environment). "Tqdm" requires additional installation of the tqdm
+ Python library (`pip install tqdm`).
 
 The status on the right displays `[elapsed time<remaining time, rate]`,
  where rate is percentage/second if fast and second/percentage if slow.

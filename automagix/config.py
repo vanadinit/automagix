@@ -46,7 +46,7 @@ CONFIG = {
     'logfile_dir': 'automagix_logs',
     'bundlewrap': False,
     'teamvault': False,
-    'progress_bar': False,
+    'progress_bar': '',
     'startup_script': '',
 }
 
@@ -88,14 +88,21 @@ if CONFIG['teamvault']:
 
     SCRIPT_FIELDS['secrets'] = 'Secrets'
 
-progress_bar = JustDoNothing()
-if CONFIG['progress_bar']:
-    try:
-        from .progress_bar import TqdmProgressBar
+match CONFIG['progress_bar']:
+    case 'True' | 'Basic':
+        from .progress_bar import BasicProgressBar
 
-        progress_bar = TqdmProgressBar()
-    except ImportError:
-        pass
+        progress_bar = BasicProgressBar()
+    case 'Tqdm':
+        try:
+            from .progress_bar import TqdmProgressBar
+
+            progress_bar = TqdmProgressBar()
+        except ImportError:
+            LOG.warning('Progress bar not working. Tqdm not installed.')
+            pass
+    case _:
+        progress_bar = JustDoNothing()
 
 
 def create_parser() -> argparse.ArgumentParser:
