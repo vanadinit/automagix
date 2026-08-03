@@ -51,19 +51,19 @@ class MetaProgressBar:
 
     @abstractmethod
     def setup(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def draw(self, percentage: int | None, color: str | None = None, cursor_col: int | None = None):
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def block(self, percentage: int | None, cursor_col: int | None = None):
-        raise NotImplemented
+        raise NotImplementedError
 
     @abstractmethod
     def destroy(self):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class BasicProgressBar(MetaProgressBar):
@@ -74,13 +74,13 @@ class BasicProgressBar(MetaProgressBar):
         self.rate_bar = rate_bar
 
     @staticmethod
-    def _get_current_nr_lines():
+    def _get_current_nr_lines() -> int:
         stream = os.popen('tput lines')
         output = stream.read()
         return int(output)
 
     @staticmethod
-    def _get_current_nr_cols():
+    def _get_current_nr_cols() -> int:
         stream = os.popen('tput cols')
         output = stream.read()
         return int(output)
@@ -90,7 +90,7 @@ class BasicProgressBar(MetaProgressBar):
         print(curses.tparm(curses.tigetstr("el")).decode(), end='')
 
     @staticmethod
-    def __format_interval(t):
+    def __format_interval(t: float | int) -> str:
         h_m, s = divmod(int(t), 60)
         h, m = divmod(h_m, 60)
         if h:
@@ -98,7 +98,7 @@ class BasicProgressBar(MetaProgressBar):
         else:
             return f"{m:02d}:{s:02d}"
 
-    def __prepare_r_bar(self, n):
+    def __prepare_r_bar(self, n: int) -> str:
         elapsed = time() - self.start_time
         elapsed_str = self.__format_interval(elapsed)
 
@@ -116,7 +116,7 @@ class BasicProgressBar(MetaProgressBar):
         r_bar = f"[{elapsed_str}<{remaining_str}, {rate_fmt}]"
         return r_bar
 
-    def _print_bar_text(self, percentage, color):
+    def _print_bar_text(self, percentage: int, color: str | None):
         colorstr = '\033[30m\033[43m' if color == 'yellow' else '\033[30m\033[42m'
         cols = self._get_current_nr_cols()
         if self.rate_bar:
@@ -158,6 +158,8 @@ class BasicProgressBar(MetaProgressBar):
         self.draw(0)
 
     def draw(self, percentage: int | None, color: str | None = None, cursor_col: int | None = None):
+        if percentage is None:
+            return
         lines = self._get_current_nr_lines()
         if lines != self.current_nr_lines:
             self.setup()

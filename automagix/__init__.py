@@ -10,6 +10,7 @@ from .config import init_logger, CONFIG, LOG, VERSION, arguments, MAGIC_SELECTIO
 from .helpers import empty_queued_input_data, selector
 from .parallel_runner import run_parallel_screens
 
+
 def run_startup_script():
     if not CONFIG.get('startup_script'):
         return
