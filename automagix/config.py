@@ -88,12 +88,12 @@ if CONFIG['teamvault']:
 
     SCRIPT_FIELDS['secrets'] = 'Secrets'
 
-match CONFIG['progress_bar']:
-    case 'True' | 'Basic':
+match str(CONFIG['progress_bar']).lower():
+    case 'true' | 'basic':
         from .progress_bar import BasicProgressBar
 
         progress_bar = BasicProgressBar()
-    case 'Tqdm':
+    case 'tqdm':
         try:
             from .progress_bar import TqdmProgressBar
 
