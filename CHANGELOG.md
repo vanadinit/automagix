@@ -4,6 +4,7 @@
 - Fork and rename to Automagix: All variables, classes, etc are replaced
 - Feature: Static commands
 - Feature: Option to specify and convert variable types
+- Feature: Reworked progress bar
 - Removed: boolean strings, which have no variable type defined, are not converted automatically anymore
 - Fix: Determination of still running remote processes, checks now for numeric PIDs
 - Fix: Input prompt for certain readline/terminal combinations

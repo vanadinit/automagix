@@ -8,7 +8,7 @@ from importlib import metadata, import_module
 from time import sleep
 
 from .colors import red
-from .helpers import read_yaml, search_script
+from .helpers import read_yaml, search_script, JustDoNothing
 
 try:
     from argcomplete import autocomplete
@@ -46,7 +46,7 @@ CONFIG = {
     'logfile_dir': 'automagix_logs',
     'bundlewrap': False,
     'teamvault': False,
-    'progress_bar': False,
+    'progress_bar': '',
     'startup_script': '',
 }
 
@@ -87,6 +87,22 @@ if CONFIG['teamvault']:
     import bwtv
 
     SCRIPT_FIELDS['secrets'] = 'Secrets'
+
+match str(CONFIG['progress_bar']).lower():
+    case 'true' | 'basic':
+        from .progress_bar import BasicProgressBar
+
+        progress_bar = BasicProgressBar()
+    case 'tqdm':
+        try:
+            from .progress_bar import TqdmProgressBar
+
+            progress_bar = TqdmProgressBar()
+        except ImportError:
+            LOG.warning('Progress bar not working. Tqdm not installed.')
+            pass
+    case _:
+        progress_bar = JustDoNothing()
 
 
 def create_parser() -> argparse.ArgumentParser:
