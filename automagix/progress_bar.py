@@ -1,4 +1,3 @@
-import curses
 import os
 import shutil
 import signal
@@ -67,6 +66,7 @@ class MetaProgressBar(ABCMeta):
 
 
 class BasicProgressBar(metaclass=MetaProgressBar):
+    # inspired by: https://github.com/pollev/python_progress_bar/blob/master/python_progress_bar/progress_bar.py
     def __init__(self, rate_bar: bool = True):
         self.progress_clocked = False
         self.current_nr_lines = 0
@@ -84,10 +84,6 @@ class BasicProgressBar(metaclass=MetaProgressBar):
         stream = os.popen('tput cols')
         output = stream.read()
         return int(output)
-
-    @staticmethod
-    def __tput_el():
-        print(curses.tparm(curses.tigetstr("el")).decode(), end='')
 
     @staticmethod
     def __format_interval(t: float | int) -> str:
@@ -120,7 +116,7 @@ class BasicProgressBar(metaclass=MetaProgressBar):
         colorstr = '\033[30m\033[43m' if color == 'yellow' else '\033[30m\033[42m'
         cols = self._get_current_nr_cols()
         if self.rate_bar:
-            r_bar = self.__prepare_r_bar(percentage)
+            r_bar = self.__prepare_r_bar(n=percentage)
             bar_size = cols - 21 - len(r_bar)
         else:
             r_bar = ""
@@ -136,22 +132,19 @@ class BasicProgressBar(metaclass=MetaProgressBar):
     def _clear_progress_bar(self):
         lines = self._get_current_nr_lines()
         Cursor.save()
-        Cursor.move_to(lines, 0)
-        self.__tput_el()
+        Cursor.move_to(row=lines, col=0)
+        Cursor.clear_line()
         Cursor.restore()
 
     def setup(self):
         self.start_time = time()
-
-        # Setup curses support (to get information about the terminal we are running in)
-        curses.setupterm()
 
         self.current_nr_lines = self._get_current_nr_lines()
         lines = self.current_nr_lines - 1
 
         print('\n', end='')
         Cursor.save()
-        Cursor.set_scroll_region(0, lines)
+        Cursor.set_scroll_region(top=0, bottom=lines)
         Cursor.restore()
         Cursor.move_up()
 
@@ -165,20 +158,20 @@ class BasicProgressBar(metaclass=MetaProgressBar):
             self.setup()
 
         Cursor.save()
-        Cursor.move_to(lines, 0)
-        self.__tput_el()
+        Cursor.move_to(row=lines, col=0)
+        Cursor.clear_line()
         self.progress_clocked = False
-        self._print_bar_text(percentage, color)
+        self._print_bar_text(percentage=percentage, color=color)
 
         Cursor.restore()
 
     def block(self, percentage: int | None, cursor_col: int | None = None):
-        self.draw(percentage, color='yellow')
+        self.draw(percentage=percentage, color='yellow')
 
     def destroy(self):
         lines = self._get_current_nr_lines()
         Cursor.save()
-        Cursor.set_scroll_region(0, lines)
+        Cursor.set_scroll_region(top=0, bottom=lines)
         Cursor.restore()
         Cursor.move_up()
         self._clear_progress_bar()
