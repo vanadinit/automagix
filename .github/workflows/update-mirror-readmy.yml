@@ -1,0 +1,35 @@
+name: Update Mirror README
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Combine READMEs
+        run: |
+          python -c "
+          with open('.github/README_TEMPLATE.md') as f:
+              template = f.read()
+          with open('README.md') as f:
+              main_readme = f.read()
+          output = template.replace('<!-- CONTENT -->', main_readme)
+          with open('.github/README.md', 'w') as f:
+              f.write(output)
+          "
+
+      - name: Commit updated README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/README.md
+          git diff --staged --quiet || (git commit -m "auto-update github mirror README" && git push)
