@@ -1,7 +1,7 @@
-> ⚠️ **MIRROR-REPOSITORY**
+> ⚠️ **MIRROR REPOSITORY**
 >
-> This is a mirror of https://codeberg.org/vanadinit/automagix.
-> Please use the original repository for Issues and Pull-Requests.
+> This is a read-only mirror of **[codeberg.org/vanadinit/automagix](https://codeberg.org/vanadinit/automagix)**.
+> Please use the [original repository](https://codeberg.org/vanadinit/automagix) for Issues and Pull Requests.
 
 ---
 

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "automagix"
-version = "4.0.0.dev2"
+version = "4.0.0"
 description = "Automation wrapper for bash and python commands"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -28,6 +28,8 @@ Homepage = "https://codeberg.org/vanadinit/automagix"
 tests = ["cython<3.0.0", "pytest", "pytest-docker", "flake8"]
 shell_completion = ["argcomplete"]
 progress_bar = ["tqdm>=4.66.0"]
+bundlewrap = ["bundlewrap"]
+teamvault = ["bundlewrap-teamvault"]
 
 [project.scripts]
 automagix = "automagix:main"
