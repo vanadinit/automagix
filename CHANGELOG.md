@@ -8,6 +8,7 @@
 - Removed: boolean strings, which have no variable type defined, are not converted automatically anymore
 - Fix: Determination of still running remote processes, checks now for numeric PIDs
 - Fix: Input prompt for certain readline/terminal combinations
+- Fix: ssh command without trailing whitespace does not throw an error any more
 - Fix: Rename bash completion -> shell completion
 - Switch setup.py -> pyproject.toml
 
