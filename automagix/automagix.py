@@ -33,7 +33,7 @@ class Automagix:
 
     @cached_property
     def cmd_class(self) -> type:
-        if self.env.config.get('bundlewrap'):
+        if 'bundlewrap' in self.env.config.get('modules'):
             from .bundlewrap import BWCommand, AutomagixBwRepo
 
             self.env.config['bw_repo'] = AutomagixBwRepo(repo_path=os.environ.get('BW_REPO_PATH', '.'))

@@ -44,8 +44,7 @@ CONFIG = {
     'ssh_cmd': 'ssh -t {hostname} sudo ',
     'logger': 'automagix',
     'logfile_dir': 'automagix_logs',
-    'bundlewrap': False,
-    'teamvault': False,
+    'modules': [],
     'progress_bar': '',
     'startup_script': '',
 }
@@ -83,7 +82,7 @@ LOG = logging.getLogger(CONFIG['logger'])
 
 SCRIPT_DIR = os.path.expanduser(os.path.expandvars(CONFIG['script_dir']))
 
-if CONFIG['teamvault']:
+if 'teamvault' in CONFIG['modules']:
     import bwtv
 
     SCRIPT_FIELDS['secrets'] = 'Secrets'
@@ -244,7 +243,7 @@ def check_deprecated_syntax(ckey: str, entry: str, script: dict, prefix: str) ->
         entry = f'{{{next(iter(entry))}}}'
 
     for pattern, replacement, flags in DEPRECATED_SYNTAX:
-        if 'b' in flags and not CONFIG['bundlewrap']:
+        if 'b' in flags and 'bundlewrap' not in CONFIG['modules']:
             continue
         if 'p' in flags and 'python' not in ckey:
             continue
@@ -363,7 +362,7 @@ def collect_vars(script: dict) -> dict:
         LOG.warning('Vars section defined, but empty!\nThis is illegal, either remove the section or add variables.')
         var_dict = {}
     script['vars'] = var_dict  # just for the case it was empty
-    if CONFIG['teamvault']:
+    if 'teamvault' in CONFIG['modules']:
         for key, secret in script.get('secrets', {}).items():
             sid, field = secret.split('_')
             if field == 'password':

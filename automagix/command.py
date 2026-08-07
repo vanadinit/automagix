@@ -413,7 +413,7 @@ class Command:
             self.env.LOG.info(KEYBOARD_INTERRUPT_MESSAGE)
             return 130
         except Exception as exc:
-            if isinstance(exc, NameError) and not self.env.config.get('bundlewrap') and str(exc) in [
+            if isinstance(exc, NameError) and 'bundlewrap' not  in self.env.config.get('modules') and str(exc) in [
                 'name \'NODES\' is not defined',
                 'name \'AUTOMAGIX_BW_REPO\' is not defined',
             ]:

@@ -84,11 +84,8 @@ All (string) configuration values can be overwritten by the
     # Logfile directory for parallel processing (ONLY for parallel processing!)
     logfile_dir: 'automagix_logs'
     
-    # Bundlewrap support, bundlewrap has to be installed (default: false)
-    bundlewrap: true
-    
-    # Teamvault / Secret support, bundlewrap-teamvault has to be installed (default: false)
-    teamvault: true
+    # Enable support for modules: bundlewrap, teamvault.
+    modules: ['bundlewrap', 'teamvault']
 
     # Activate progress bar: "Basic" or "Tqdm", default "" (no progress bar)
     progress_bar: Basic
