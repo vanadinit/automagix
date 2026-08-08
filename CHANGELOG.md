@@ -1,7 +1,8 @@
 # Changelog
 
 # 4.0.1
-- Fix pyproject.toml syntax
+- Fix: pyproject.toml syntax
+- Fix: Default for empty vars
 
 # 4.0.0
 - Fork and rename to Automagix: All variables, classes, etc are replaced
@@ -15,6 +16,11 @@
 - Fix: ssh command without trailing whitespace does not throw an error any more
 - Fix: Rename bash completion -> shell completion
 - Switch setup.py -> pyproject.toml
+
+### Migration from Automatix:
+- Replace your environment variables: AUTOMATIX_[...] becomes AUTOMAGIX_[...]
+- If Bundlewrap/Teamvault is activated: Adjust your automatix.cfg.yaml to have these defined as modules.
+- If your scripts rely on auto-conversion of "boolean strings": Add bool as var_type.
 
 # 3.2.1
 - Add conversion of boolean strings to booleans
