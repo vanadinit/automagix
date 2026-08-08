@@ -223,7 +223,7 @@ def get_script(args: argparse.Namespace) -> dict:
 
 def collect_var_types(script: dict):
     script['_var_types'] = {}
-    for variable_name in list(script.get('vars')):
+    for variable_name in list(script.get('vars', [])):
         if match := re.match(r'(\w+)\|(.*)', variable_name):
             v_name = match.group(2)
             v_type = match.group(1)
