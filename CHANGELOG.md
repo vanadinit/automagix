@@ -1,5 +1,8 @@
 # Changelog
 
+# 4.0.1
+- Fix pyproject.toml syntax
+
 # 4.0.0
 - Fork and rename to Automagix: All variables, classes, etc are replaced
 - Feature: Static commands
