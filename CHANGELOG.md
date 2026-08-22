@@ -1,6 +1,6 @@
 # Changelog
 
-# 4.1.0 (not released yet)
+# 4.1.0
 - Feature: Option to overwrite the global configuration per script
 - Feature: Reload from file with "=" to set absolute index
 - Fix: Add missing variables and links to README
