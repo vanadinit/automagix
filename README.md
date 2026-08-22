@@ -501,9 +501,10 @@ From **automagix** 1.13.0 on you can use the reload scriptfile feature
  instead. When asked for options (either because a command failed or
  you are in interactive mode) you can use **-R** to reload the
  scriptfile. If lines in the scriptfile have changed, or you need to
- repeat steps, you can use R+/-$number to reload and adjust the
- restart point (available since **automagix** 1.14.0). NOTICE: If using
- vars-file, this reloads the script ONLY the active CSV row!
+ repeat steps, you can use R+/-/=$number to reload and adjust the
+ restart point. NOTICE: Only the pipeline is reloaded, not the variables
+ or other definitions. If using vars-file, this reloads the script
+ ONLY the active CSV row!
 
 Repeat this procedure to automate more and more and increase quality,
  whenever you feel like it.

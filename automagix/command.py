@@ -32,7 +32,7 @@ POSSIBLE_ANSWERS = {
     'v': 'show and change variables',
     'r': 'retry',
     'R': 'reload from file and retry command (same index)',
-    'R±X': 'same as R, but change index by X (integer)',
+    'R±X': 'same as R, but modify index (± relative, = absolute)',
     's': 'skip',
     'a': 'abort',
     'c': 'abort & continue to next (CSV processing)',
@@ -314,15 +314,25 @@ class Command:
         """
         answer = self.env.interact(question, progress_portion=self.progress_portion)
 
+        ## Special handling beforehand, because here the answers does not match exactly the definition
         if answer == '':  # default
             answer = PA.proceed.answer
 
-        if answer.startswith('R') and PA.reload_index in allowed_options and len(answer) > 1:
+        if answer.startswith('R') and PA.reload_index in allowed_options:
+            if answer == 'R':
+                raise ReloadFromFile(index=self.index)
             try:
-                raise ReloadFromFile(index=self.index + int(answer[1:]))
+                match answer[1]:
+                    case '+':
+                        raise ReloadFromFile(index=self.index + int(answer[2:]))
+                    case '-':
+                        raise ReloadFromFile(index=self.index - int(answer[2:]))
+                    case '=':
+                        raise ReloadFromFile(index=int(answer[2:]))
             except ValueError:
                 pass
 
+        ## Normal cases - first check if in allowed options, to return early if not
         if answer not in [ao.answer for ao in allowed_options]:
             self.env.LOG.warning('Invalid input. Try again.')
             return self._ask_user_with_options(question=question, allowed_options=allowed_options)
@@ -356,8 +366,6 @@ class Command:
                 return self._ask_user_with_options(question=question, allowed_options=allowed_options)
             case PA.abort.answer:
                 raise AbortException(1)
-            case PA.reload.answer:
-                raise ReloadFromFile(index=self.index)
             case PA.abort_continue.answer:
                 raise SkipBatchItemException()
             case PA.retry.answer | PA.skip.answer | PA.proceed.answer:
