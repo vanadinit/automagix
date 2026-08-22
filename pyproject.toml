@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://codeberg.org/vanadinit/automagix"
+Source = "https://codeberg.org/vanadinit/automagix"
 
 [project.optional-dependencies]
 tests = ["pytest", "pytest-docker", "flake8"]
