@@ -20,8 +20,9 @@ There are different modes for **automagix** to work. Without any
  Forced mode (**-f**) will also proceed if errors occur.
 
 **automagix** was originally designed for internal Seibert Group use.
- It comes therefore with bundlewrap and teamvault support as well as
- the possibility to use your own logging library.
+ It comes therefore with [BundleWrap](https://bundlewrap.org) and
+ [TeamVault](https://github.com/seibert-media/teamvault) support
+ as well as the possibility to use your own logging library.
 
 ## Warning:
 
@@ -115,7 +116,7 @@ All (string) configuration values can be overwritten by the
 
 **scriptfile**
 : The only required parameter for this tool to work. Use " -- " if
- needed to delimit this from argument fields. See **SCRIPTFILE**
+ needed to delimit this from argument fields. See [**SCRIPTFILE**](#scriptfile)
  section for more information.  
 
 **-h**, **--help**
@@ -157,7 +158,7 @@ All (string) configuration values can be overwritten by the
   
 **--parallel**
 : Run CSV file entries parallel in screen sessions; only valid with --vars-file.
-  GNU screen has to be installed. See EXTRAS section below.
+  GNU screen has to be installed. See [EXTRAS](#parallel-processing) section below.
 
 **--print-overview**, **-p**
 : Just print command pipeline overview with indices then exit without
@@ -197,9 +198,10 @@ The **scriptfile** describes your automated process. Therefore it
  command pipeline.
 
 You can provide a path to your **scriptfile** or place your
- scriptfile in the predefined directory (see **CONFIGURATION**
- section, _script_dir_). The path has precedence over the predefined
- directory, if the file exists at both locations.
+ scriptfile in the predefined directory
+ (see [**GLOBAL CONFIGURATION**](#global-configuration) section, _script_dir_).
+ The path has precedence over the predefined directory,
+ if the file exists at both locations.
 
 The **scriptfile** has to contain valid YAML.
 
@@ -263,7 +265,7 @@ The **scriptfile** has to contain valid YAML.
 
 **config** _(associative array)_
 : Overwrite config values for this specific automatix script.
- Environment variables still have precedence! See **GLOBAL CONFIGURATION**. 
+ Environment variables still have precedence! See [**GLOBAL CONFIGURATION**](#global-configuration). 
 
 **systems** _(associative array)_
 : Define some systems. Value has to be a valid SSH destination like an
@@ -304,10 +306,10 @@ You can refer to these systems in the command pipeline in multiple ways:
  This can be useful to source files with shell functions you want to use.
 
 **always**, **cleanup** _(list of associative arrays)_
-: See **ALWAYS / CLEANUP PIPELINE** section.
+: See [**ALWAYS / CLEANUP PIPELINE**](#always--cleanup-pipeline) section.
 
 **pipeline** _(list of associative arrays)_
-: See **PIPELINE** section.
+: See [**PIPELINE**](#pipeline) section.
 
 ### PIPELINE
 
@@ -322,11 +324,12 @@ Here you define the commands automagix shall execute.
  in `bash_path` (default: /bin/bash) will be used for execution.
  The environment is inherited with additional 
  **RUNNING_INSIDE_AUTOMAGIX** set to 1.
+ **AUTOMATION_SCRIPT_LOCATION** (parent directory) and
+ **AUTOMATIX_SCRIPT_NAME** (filename without path) are available.
 
 3) **remote@systemname**: Remote shell command to execute. Systemname
- has to be a defined system. The command will be run via SSH (without
-  pseudo-terminal allocation). It uses the standard SSH command.
-  Therefore your .ssh/config should be respected.
+ has to be a defined system. The command will be run via the specified
+ SSH command. Depending on that your .ssh/config should be respected.
  If systemname is a Bundlewrap group, the remote command will be
   executed sequentially for every node.
 
@@ -376,13 +379,13 @@ Here you define the commands automagix shall execute.
  systems, secrets and constants.
 
 Constants are available via CONST.KEY, where KEY is the key of your
- constants in your **CONFIGURATION** file. There you can define some
- widely used constants.
+ constants in your [**CONFIGURATION**](#global-configuration) file.
+ There you can define some widely used constants.
 
 In most cases its a good idea to define your command in quotes to
  avoid parsing errors, but it is not always necessary. Another way is
  to use '|' to indicate a _literal scalar block_. There you can even
- define whole program structures for python (see example).
+ define whole program structures for python (see [example](#example-scriptfile)).
 
 #### Escaping in Pipeline
 
@@ -417,10 +420,9 @@ Intended use case for **cleanup**: Remove temporary files or artifacts.
  Default is "~/.automagix.cfg.yaml".  
 
 **AUTOMAGIX_**_config-variable-in-upper-case_: Set or overwrite the 
- corresponding configuration value. See **CONFIGURATION** section.
- Works only for string and boolean values!
- String values (case-insensitive 'true' or 'false') are converted
- to `True` or `False` in Python, if the fields expects a boolean.
+ corresponding configuration value.
+ See [**GLOBAL CONFIGURATION**](#global-configuration) section.
+ Works only for string values!
  **All other values (int, float, dict, list, ...) are ignored!**
 
 **AUTOMAGIX_TIME**: Set this to an arbitrary value to print the times
@@ -478,9 +480,11 @@ To abort the current automagix and jump to the next batch item you can
 
 If you have _GNU screen_ installed, you may start a screen session with
  `-L` and optional `-Logfile LOGFILE` in which you start **automagix**.
- (This is how it works with "parallel processing", see **EXTRAS** section.)
+ (This is how it works with "parallel processing",
+  see [**EXTRAS**](#parallel-processing) section.)
 
-A different approach is to use `tee`, e.g. `automagix [script file + options] 2>&1 | tee auto.log`.
+A different approach is to use `tee`,
+ e.g. `automagix [script file + options] 2>&1 | tee auto.log`.
  Different to the screen approach this seems not to capture your input.
 
 # BEST PRACTISES
@@ -514,7 +518,7 @@ Do the same with variable content like URLs, to make it possible to
  parameters.
 
 Preferred way of using **automagix** is to put often used and complex
- algorithms in python libraries and import them. Advantage of this
+ algorithms in Python libraries and import them. Advantage of this
  approach is that you can use your  implemented functions multiple
  times and build up a toolbox of nice functionality over time.
 

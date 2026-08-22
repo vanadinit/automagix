@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.1.0 (not released yet)
+- Feature: Option to overwrite the global configuration per script
+- Fix: Add missing variables and links to README
+
 # 4.0.1
 - Fix: pyproject.toml syntax
 - Fix: Default for empty vars
