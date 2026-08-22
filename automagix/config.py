@@ -61,10 +61,6 @@ for c_key, c_value in CONFIG.items():
     if not env_value:
         continue
 
-    if isinstance(c_value, bool) and env_value.lower() in ['false', 'true']:
-        CONFIG[c_key] = True if env_value.lower() == 'true' else False
-        continue
-
     if isinstance(c_value, str):
         CONFIG[c_key] = env_value
         continue

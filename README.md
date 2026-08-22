@@ -45,7 +45,7 @@ Automagix requires Python &ge; 3.10.
 pip install automagix
 ```
 
-# CONFIGURATION
+# GLOBAL CONFIGURATION
 
 You can specify a path to a configuration YAML file via the
  environment variable **AUTOMAGIX_CONFIG**.
@@ -209,6 +209,8 @@ The **scriptfile** has to contain valid YAML.
     # Systems you like to refer to in pipeline (accessible via 'SYSTEMS.source')
     # If Bundlewrap support is activated use node names instead of hostnames or add preceeding 'hostname!'.
     require_version: '1.5.0'
+    config:
+      ssh_cmd: 'ssh -t {hostname} '
     systems:
       source: sourcesystem.com
       target: targetsystem.org
@@ -258,6 +260,10 @@ The **scriptfile** has to contain valid YAML.
 : The required Automagix version for this script to run. Similar to the
  [Python version specifiers](https://packaging.python.org/en/latest/specifications/version-specifiers/#version-specifiers).
  Multiple conditions can be separated by comma. Allowed operators are: "==","!=",">=" (default),"<=",">","<","~="
+
+**config** _(associative array)_
+: Overwrite config values for this specific automatix script.
+ Environment variables still have precedence! See **GLOBAL CONFIGURATION**. 
 
 **systems** _(associative array)_
 : Define some systems. Value has to be a valid SSH destination like an

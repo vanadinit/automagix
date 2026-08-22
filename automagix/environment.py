@@ -1,5 +1,7 @@
 from argparse import Namespace
+from copy import deepcopy
 from logging import getLogger
+from os import getenv
 from pathlib import Path
 from typing import Any
 
@@ -44,7 +46,7 @@ class PipelineEnvironment:
             batch_index: int,
             cmd_args: Namespace,
     ):
-        self.config = config
+        self.config = deepcopy(config)
         self.script = script
         self.vars = AttributedDict()
         for k, v in variables.items():
@@ -59,11 +61,18 @@ class PipelineEnvironment:
         self.batch_mode = script.get('_batch_mode', False)
         self.batch_items_count = script.get('_batch_items_count', 1)
 
+        self._overwrite_config()
+
         self.LOG = None
         self.auto_file = None
 
         # This will be set at runtime
         self.command_count = None
+
+    def _overwrite_config(self):
+        for key in self.config:
+            if key in self.script.get('config', {}).keys() and not getenv(f'AUTOMATIX_{key}'):
+                self.config[key] = self.script['config'][key]
 
     def attach_logger(self):
         self.LOG = getLogger(self.config['logger'])
