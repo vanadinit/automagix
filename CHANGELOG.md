@@ -1,5 +1,8 @@
 # Changelog
 
+# 4.2.0 (not published yet)
+- Feature: Add option for specific precommands for different remote systems
+
 # 4.1.0
 - Feature: Option to overwrite the global configuration per script
 - Feature: Reload from file with "=" to set absolute index

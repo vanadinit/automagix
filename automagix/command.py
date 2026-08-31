@@ -102,8 +102,14 @@ class Command:
         return round(own_position / overall_command_count * 100, 1)
 
     @property
-    def precommand(self):
-        return self.env.script.get('precommands', {}).get(self.get_type(), None)
+    def precommand(self) -> str | None:
+        precommands = self.env.script.get('precommands', {})
+        if self.key in precommands:
+            return precommands[self.key]
+        elif self.get_type() in precommands:
+            return precommands[self.get_type()]
+        else:
+            return None
 
     def get_type(self):
         if self.key == 'local':
