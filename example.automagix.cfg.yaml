@@ -32,3 +32,6 @@ modules: ['bundlewrap', 'teamvault']
 # Startup script, which is triggered on every start of Automagix.
 # The whole Automagix call with all arguments is passed through as arguments.
 startup_script: '/some/path/bin/automagix_startup.sh'
+
+# Replace carriage return + line feed with line feed (default True)
+replace_crlf: True

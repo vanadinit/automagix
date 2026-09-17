@@ -465,7 +465,9 @@ class Command:
                 stdout=subprocess.PIPE,
             )
             output = proc.stdout.decode(self.env.config["encoding"])
-            assigned_value = output.rstrip('\r\n')
+            if self.env.config['replace_crlf']:
+                output = output.replace('\r\n', '\n')
+            assigned_value = output.rstrip('\r\n').rstrip('\n')
             self.env.set_var(key=self.assignment_var, value=assigned_value)
             hint = ' (trailing newline removed)' if (output.endswith('\n') or output.endswith('\r')) else ''
             self.env.LOG.info(f'Variable {self.assignment_var} = "{assigned_value}"{hint}')

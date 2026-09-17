@@ -47,6 +47,7 @@ CONFIG = {
     'modules': [],
     'progress_bar': '',
     'startup_script': '',
+    'replace_crlf': True,
 }
 
 MAGIC_SELECTION_INT = -999999999  # Some number nobody would normally type to mark that selection is wanted.
