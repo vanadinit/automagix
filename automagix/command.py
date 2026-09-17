@@ -318,9 +318,8 @@ class Command:
         if answer == '':  # default
             answer = PA.proceed.answer
 
-        if answer.startswith('R') and PA.reload_index in allowed_options:
-            if answer == 'R':
-                raise ReloadFromFile(index=self.index)
+        ## reload_index
+        if answer.startswith('R') and PA.reload_index in allowed_options and len(answer) > 1:
             try:
                 match answer[1]:
                     case '+':
@@ -368,6 +367,8 @@ class Command:
                 raise AbortException(1)
             case PA.abort_continue.answer:
                 raise SkipBatchItemException()
+            case PA.reload.answer:
+                raise ReloadFromFile(index=self.index)
             case PA.retry.answer | PA.skip.answer | PA.proceed.answer:
                 return answer
             case _:
