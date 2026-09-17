@@ -1,5 +1,8 @@
 # Changelog
 
+# 4.1.1
+- Fix: Answer handling for reload without index in some cases
+
 # 4.1.0
 - Feature: Option to overwrite the global configuration per script
 - Feature: Reload from file with "=" to set absolute index
