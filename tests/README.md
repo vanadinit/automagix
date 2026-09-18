@@ -17,6 +17,7 @@ Install `podman-compose` via pip and symlink the `docker` command to `podman`.
     Host docker-test
       Hostname localhost
       Port 2222
+      User testuser
       IdentityFile tests/secrets/id_rsa_tests
       StrictHostKeyChecking no
     

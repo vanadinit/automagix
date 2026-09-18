@@ -54,6 +54,7 @@ jobs:
         echo "Host docker-test" >> ~/.ssh/config
         echo "  Hostname localhost" >> ~/.ssh/config
         echo "  Port 2222" >> ~/.ssh/config
+        echo "  User testuser" >> ~/.ssh/config
         echo "  IdentityFile tests/secrets/id_rsa_tests" >> ~/.ssh/config
         echo "  StrictHostKeyChecking no" >> ~/.ssh/config
         echo "" >> ~/.ssh/config

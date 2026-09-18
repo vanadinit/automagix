@@ -14,7 +14,7 @@ services:
       - PASSWORD_ACCESS=false #optional
 #      - USER_PASSWORD=geheim #optional
 #      - USER_PASSWORD_FILE=/path/to/file #optional
-      - USER_NAME=${USER} #optional
+      - USER_NAME=testuser #optional
     volumes:
       - ./secrets:/secrets
     ports:
