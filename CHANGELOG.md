@@ -1,6 +1,6 @@
 # Changelog
 
-# 4.2.0 (not published yet)
+# 4.2.0
 - Feature: Add option for specific precommands for different remote systems
 - Fix: Convert CRLF back to LF when writing to variable (remote PTY)
 
