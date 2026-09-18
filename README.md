@@ -228,6 +228,7 @@ The **scriptfile** has to contain valid YAML.
     precommands:
       local: '. myfunctions'
       remote: '. /tmp/myfunctions'
+      remote@source: '. /tmp/myfunctions'
     # like command pipeline but will be exectuted always beforehand
     always:
       - python: |
@@ -302,8 +303,11 @@ You can refer to these systems in the command pipeline in multiple ways:
 
 **precommands** _(associative array)_
 : Define a command which is executed before every shell command.
- You can specify a command for local and remote commands separately.
  This can be useful to source files with shell functions you want to use.
+ You can specify a command for local and remote commands separately.
+ If you specify a remote system like `remote@mysystem` the precommand
+ is executed only for this system. Writing simply `remote` refers to all
+ systems which do not have their own specified command.
 
 **always**, **cleanup** _(list of associative arrays)_
 : See [**ALWAYS / CLEANUP PIPELINE**](#always--cleanup-pipeline) section.
