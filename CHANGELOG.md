@@ -2,6 +2,7 @@
 
 # 4.2.0 (not published yet)
 - Feature: Add option for specific precommands for different remote systems
+- Fix: Convert CRLF back to LF when writing to variable (remote PTY)
 
 # 4.1.1
 - Fix: Answer handling for reload without index in some cases
