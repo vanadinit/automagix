@@ -138,6 +138,7 @@ def test__show_and_change_variables():
     cmd = Command(cmd={'python': 'pass'}, index=2, pipeline='pipeline', env=deepcopy(environment), position=1)
     assert cmd.env.vars == {
         'a': '{a}',
+        'b': '{b}',
         'myvar': 'huhu',
         'cond': '{cond}',
         'cond2': '{cond2}',
@@ -159,6 +160,7 @@ def test__show_and_change_variables():
     assert mock_interact.call_count == 4
     assert cmd.env.vars == {
         'a': '{a}',
+        'b': '{b}',
         'myvar': 'hallo',
         'cond': '{cond}',
         'cond2': '!dgkls=432',

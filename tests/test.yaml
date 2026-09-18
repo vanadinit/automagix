@@ -70,6 +70,10 @@ pipeline:
     # First (VARS.a) is the variable itself,
     # while for the {a} the whole command is formatted with the variable values.
   - python: assert VARS.a == {a}
+  # Assign remote multiline string
+  - b=remote@testsystem: ls -la /
+  # Check for CR = carriage return (\r) and LF = line feed (\n): \r should be replaced since 4.2.0
+  - python: print(repr(VARS.b))
   # 2) PERSISTENT_VARS, shortcut PVARS; might be better to use always the shortcut as it has additional features
   - python: PVARS.b = 7
   # it can be used in the following ways:
