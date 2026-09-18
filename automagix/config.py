@@ -5,6 +5,7 @@ import re
 import sys
 from collections import OrderedDict
 from importlib import metadata, import_module
+from pathlib import Path
 from time import sleep
 
 from .colors import red
@@ -52,8 +53,25 @@ CONFIG = {
 
 MAGIC_SELECTION_INT = -999999999  # Some number nobody would normally type to mark that selection is wanted.
 
-configfile = os.path.expanduser(os.path.expandvars(os.getenv('AUTOMAGIX_CONFIG', '~/.automagix.cfg.yaml')))
-if os.path.isfile(configfile):
+
+def find_config(path: Path) -> Path | None:
+    candidate = path / '.automagix.cfg.yaml'
+    if candidate.is_file():
+        return candidate
+    if path.parent == path:
+        return None
+    return find_config(path.parent)
+
+
+if os.getenv('AUTOMAGIX_CONFIG'):
+    configfile = Path(os.path.expanduser(os.path.expandvars(os.getenv('AUTOMAGIX_CONFIG'))))
+else:
+    configfile = find_config(Path.cwd())
+
+if configfile is None:
+    configfile = Path(os.path.expanduser('~/.automagix.cfg.yaml'))
+
+if configfile.is_file():
     CONFIG.update(read_yaml(configfile))
     CONFIG['config_file'] = configfile
 

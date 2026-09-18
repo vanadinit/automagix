@@ -49,8 +49,9 @@ pip install automagix
 # GLOBAL CONFIGURATION
 
 You can specify a path to a configuration YAML file via the
- environment variable **AUTOMAGIX_CONFIG**.
-Default location is "~/.automagix.cfg.yaml".
+ environment variable **AUTOMAGIX_CONFIG**. If not specified,
+ **Automagix** searches in the actual directory, then any parent
+ directory and last in the home directory for a ".automagix.cfg.yaml".
 All (string) configuration values can be overwritten by the
  corresponding upper case environment variables preceeded
  by 'AUTOMAGIX_', e.g. _AUTOMAGIX_ENCODING_.

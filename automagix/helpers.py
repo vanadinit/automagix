@@ -1,5 +1,6 @@
 from os import walk, mkdir, rmdir
 from os.path import abspath, join, isfile
+from pathlib import Path
 from sys import stdin
 from termios import tcflush, TCIFLUSH
 from time import sleep
@@ -10,7 +11,7 @@ import yaml
 yaml.warnings({'YAMLLoadWarning': False})
 
 
-def read_yaml(yamlfile: str) -> dict:
+def read_yaml(yamlfile: str | Path) -> dict:
     with open(yamlfile) as file:
         return yaml.load(file.read(), Loader=yaml.SafeLoader)
 
