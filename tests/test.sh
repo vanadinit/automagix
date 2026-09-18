@@ -3,9 +3,9 @@ testfunction () {
 }
 
 testfunction2 () {
-  for i in $(seq 1 10);
+  for i in $(seq 1 10)
   do
     echo $i
-    sleep 10
+    sleep 2
   done
 }

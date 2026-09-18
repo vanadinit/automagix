@@ -9,6 +9,7 @@ systems:
   # should start with a letter character [a-zA-Z]
   # followed by alphanumeric characters [a-zA-Z_0-9]
   testsystem: docker-test  # SSH Hostname or Bundlewrap node name (if enabled)
+  testsystem2: docker-test  # SSH Hostname or Bundlewrap node name (if enabled)
 vars:
   myvar: huhu
   float|myvar2: 5
@@ -17,6 +18,7 @@ vars:
 precommands: # only for main pipeline
   local: . tests/test.sh
   remote: . /tmp/test.sh
+  remote@testsystem2: ls /
 
 always:  # <-- The always pipeline is executed even if you just want to print the commands!
   - local: echo 'Print this always :-)'
