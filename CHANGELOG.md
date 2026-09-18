@@ -1,5 +1,8 @@
 # Changelog
 
+# 4.3.0 (not published yet)
+- Feature: Search for .automagix.cfg.yaml in working directory and parents
+
 # 4.2.0
 - Feature: Add option for specific precommands for different remote systems
 - Fix: Convert CRLF back to LF when writing to variable (remote PTY)
