@@ -95,6 +95,9 @@ All (string) configuration values can be overwritten by the
     # The whole Automagix call with all arguments is passed through as arguments.
     startup_script: '/some/path/bin/automagix_startup.sh'
 
+    # Replace carriage return + line feed with line feed (default True)
+    replace_crlf: True
+
 # SYNOPSIS
 
 **automagix**
@@ -533,6 +536,8 @@ Preferred way of using **automagix** is to put often used and complex
 **Manual steps** will always cause automagix to stop and wait for
  user input.
 
+### Assignments
+
 Be careful with **assignments** containing line breaks (echo, ...).
  Using the variables may lead to unexpected behaviour or errors.
  From version 1.14.0 on trailing new lines in **assignments**
@@ -540,16 +545,36 @@ Be careful with **assignments** containing line breaks (echo, ...).
 
 Assignments containing **null bytes** are currently not supported.
 
+### SSH Pseudo-terminal allocation (ssh -t)
+
+Pseudo-Terminal (PTY) allocation changes the newline handling and
+adds carriage return (CR) for displaying the output correctly.
+As we possibly want to interact with remote commands by following
+the output, passing input and sending signals, this PTY allocation
+is intended and recommended.
+
+For processing the output of commands we do not want the assigned
+variable to contain the added CRs, because this might lead to
+unexpected behavior. Therefore, we replace CRLF by simple linefeed (LF)
+characters. You can change this behaviour by setting `replace_crlf` to
+`False` in the [**CONFIGURATION**](#global-configuration).
+
+See also some [explanation on stackexchange](https://unix.stackexchange.com/questions/151916/why-is-this-binary-file-transferred-over-ssh-t-being-changed/151963#151963).
+
+### Abort / interrupt / cancel actions
+
 Because the **always** pipeline should not change anything, aborting
  while running this pipeline will not trigger a cleanup.
 
 If you want to abort the **pipeline** without triggering the
  **cleanup** pipeline, use CRTL+C.
 
-While **aborting remote functions** automagix is not
- able to determine still running processes invoked by the function,
- because it only checks the processes for the commands (in this case
- the function name) which is called in the pipeline.
+When interrupting remote shell functions (CTRL+C), automagix is not
+ able to determine still running processes invoked by the function.
+ This is because it only checks the processes for the commands (in this
+ case the function name) which is called in the pipeline.
+
+### Automagix user interaction
 
 User input questions are of following categories:
 - [MS] **M**anual **S**tep
@@ -558,7 +583,7 @@ User input questions are of following categories:
 - [RR] **R**emote process still **R**unning
 - [SE] **S**yntax **E**rror
 
-The terminal (T) answer starts an interactive Bash-Shell.
+The **terminal (T)** answer starts an interactive Bash-Shell.
  Therefore .bashrc is executed, but the command prompt (PS1) is
  replaced to indicate, that we are still in an automagix process.
  
