@@ -1,7 +1,6 @@
 import subprocess
 from argparse import Namespace
 from os.path import abspath, dirname
-from time import sleep
 
 import pytest
 
@@ -49,24 +48,25 @@ def run_command_and_check(cmd):
     subprocess.run(cmd, shell=True).check_returncode()
 
 
+def is_responsive():
+    try:
+        run_command_and_check(
+            'ssh 2>/dev/null'
+            ' -o StrictHostKeyChecking=no'
+            ' -o "UserKnownHostsFile /dev/null"'
+            ' -o ControlMaster=no'
+            ' -o ControlPath=none'
+            ' -o ConnectTimeout=10'
+            ' docker-test /bin/true')
+    except subprocess.CalledProcessError:
+        return False
+
+    run_command_and_check(cmd='ssh-keygen -R [localhost]:2222 >/dev/null 2>&1 || true')
+    run_command_and_check(cmd='ssh-keygen -R localhost:2222 >/dev/null 2>&1 || true')
+    run_command_and_check(cmd='ssh-keyscan -t ecdsa -p 2222 localhost 2>/dev/null >> ~/.ssh/known_hosts || true')
+    return True
+
+
 @pytest.fixture(scope='function')
 def ssh_up(docker_services):
-    max_retries = 20
-    for _ in range(max_retries):
-        sleep(1)
-        try:
-            run_command_and_check(
-                'ssh 2>/dev/null'
-                ' -o StrictHostKeyChecking=no'
-                ' -o "UserKnownHostsFile /dev/null"'
-                ' -o ControlMaster=no'
-                ' -o ControlPath=none'
-                ' -o ConnectTimeout=10'
-                ' docker-test /bin/true')
-        except subprocess.CalledProcessError:
-            continue
-        run_command_and_check(cmd='ssh-keygen -R [localhost]:2222 >/dev/null 2>&1 || true')
-        run_command_and_check(cmd='ssh-keygen -R localhost:2222 >/dev/null 2>&1 || true')
-        run_command_and_check(cmd='ssh-keyscan -t ecdsa -p 2222 localhost 2>/dev/null >> ~/.ssh/known_hosts || true')
-        return
-    raise Exception('Maximum retries exceeded: SSH test setup could not be created.')
+    docker_services.wait_until_responsive(timeout=30.0, pause=0.5, check=lambda: is_responsive())
