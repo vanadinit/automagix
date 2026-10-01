@@ -127,11 +127,12 @@ def test__get_python_locale_vars():
 
 
 def test__parse_key():
-    assert parse_key('python') == (None, None, 'python')
-    assert parse_key('remote@v1') == (None, None, 'remote@v1')
-    assert parse_key('host=remote@v1') == (None, 'host', 'remote@v1')
-    assert parse_key('is_jira?host=remote@v1') == ('is_jira', 'host', 'remote@v1')
-    assert parse_key('is_jira!?python') == ('is_jira!', None, 'python')
+    assert parse_key('python') == (None, None, 'python', None)
+    assert parse_key('remote@v1') == (None, None, 'remote@v1', None)
+    assert parse_key('host=remote@v1') == (None, 'host', 'remote@v1', None)
+    assert parse_key('is_jira?host=remote@v1') == ('is_jira', 'host', 'remote@v1', None)
+    assert parse_key('is_jira!?python') == ('is_jira!', None, 'python', None)
+    assert parse_key('v!?test=remote@v2;tv') == ('v!', 'test', 'remote@v2', 'tv')
 
 
 def test__show_and_change_variables():

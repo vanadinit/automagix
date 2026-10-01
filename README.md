@@ -382,6 +382,13 @@ Here you define the commands automagix shall execute.
  value, e.g. `python-: f'{this} is not replaced'`. This is  especially
  useful for Python commands which use curly brackets themselves.
 
+**OPTIONS**: You can specify following options to deviate from the
+ default behavior for this single command. To specify an option add ';'
+ and one or multiple of the following characters:
+ - `V`: do not replace values (like static flag)
+ - `t`: use `ssh -t` (pseudo-terminal allocation)
+ - `T`: do not use `ssh -t` (pseudo-terminal allocation)
+
 **VALUE**: Your command. Variables will be replaced with Python
  format function. Therefore, use curly brackets to refer to variables,
  systems, secrets and constants.

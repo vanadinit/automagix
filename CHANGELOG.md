@@ -2,6 +2,8 @@
 
 # 4.3.0 (not published yet)
 - Feature: Search for .automagix.cfg.yaml in working directory and parents
+- Feature: Switch SSH-Pseudo-Terminal allocation for assignment commands or via command option (t/T)
+- Feature: Switch to static command via command option (V)
 
 # 4.2.0
 - Feature: Add option for specific precommands for different remote systems

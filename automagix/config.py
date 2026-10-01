@@ -42,7 +42,7 @@ CONFIG = {
     'constants': {},
     'encoding': 'utf-8',
     'bash_path': '/bin/bash',
-    'ssh_cmd': 'ssh -t {hostname} sudo ',
+    'ssh_cmd': 'ssh {hostname} sudo ',
     'logger': 'automagix',
     'logfile_dir': 'automagix_logs',
     'modules': [],
@@ -345,11 +345,13 @@ def check_removed_features(script: dict) -> int:
 
 def check_proper_config() -> int:
     warn = 0
-    if '-t' not in CONFIG['ssh_cmd']:
+    if '-t' in CONFIG['ssh_cmd']:
         LOG.warning(
-            'Your configured SSH command seems not to contain pseudo-terminal allocation.'
-            ' This may lead to a behaviour where signals like CTRL-C are not passed'
-            ' to a remote system and processes will still continue running.'
+            'Your configured SSH command contains pseudo-terminal allocation (-t).'
+            ' This was recommended until version 4.3.0, but is now discouraged'
+            ' and handled automatically. As default commands with assignment are'
+            ' executed without PTY, commands without assignment are executed with PTY.'
+            ' You may change this behavior at command level via command option.'
         )
         warn += 1
 

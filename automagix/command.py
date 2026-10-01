@@ -76,16 +76,12 @@ class Command:
         self.position = position
 
         self.bash_path = self.env.config['bash_path']
+        self.remote_tty = True
+        self.static = False
 
         for key, value in cmd.items():
             self.orig_key = key
-            self.condition_var, self.assignment_var, self.key = parse_key(key=key)
-
-            if self.key.endswith('-'):
-                self.key = self.key[:-1]
-                self.static = True
-            else:
-                self.static = False
+            self.condition_var, self.assignment_var, self.key, self.options = parse_key(key=key)
 
             if isinstance(value, dict):
                 # We need this workaround because the yaml lib returns a dictionary instead of a string,
@@ -94,6 +90,30 @@ class Command:
             else:
                 self.value = value
             break  # There should be only one entry in pipeline_cmd
+
+        self.postinit()
+
+    def postinit(self):
+        """This modifies default values and behavior based on the parsed key"""
+        if self.key.endswith('-'):
+            self.key = self.key[:-1]
+            self.static = True
+
+        if self.assignment_var:
+            self.remote_tty = False
+
+        if isinstance(self.options, str):
+            if 'V' in self.options:
+                self.static = True
+
+            if 't' in self.options:
+                self.remote_tty = True
+            elif 'T' in self.options:
+                self.remote_tty = False
+
+        # For backwards compatibility: No tty insertion if '-t' already in ssh_cmd!
+        if '-t' in self.env.config['ssh_cmd']:
+            self.remote_tty = False
 
     @property
     def progress_portion(self) -> int:
@@ -502,6 +522,7 @@ class Command:
 
     def _get_remote_command(self, hostname: str) -> str:
         ssh_cmd = self.env.config["ssh_cmd"].format(hostname=hostname)
+        ssh_cmd = ssh_cmd.replace('ssh', 'ssh -t') if self.remote_tty else ssh_cmd
         return f'{ssh_cmd} {quote("RUNNING_INSIDE_AUTOMAGIX=1 bash -c " + quote(self._build_command()))}'
 
     def _remote_handle_keyboard_interrupt(self, hostname: str):
@@ -549,7 +570,7 @@ class Command:
 
         self.env.LOG.info('Keystroke interrupt handled.\n')
 
-    def get_remote_pids(self, hostname) -> list:
+    def get_remote_pids(self, hostname) -> list[str]:
         ps_cmd = "ps axu | grep RUNNING_INSIDE_AUTOMAGIX | grep -v 'grep' | awk '{print $2}'"
         remote_ps_cmd = f'ssh {hostname} {quote(ps_cmd)} 2>&1'
         output = subprocess.check_output(
@@ -559,7 +580,7 @@ class Command:
         ).decode(self.env.config["encoding"])
 
         try:
-            return [int(p) for p in output.split()]
+            return [str(int(p)) for p in output.split()]
         except ValueError as exc:
             raise ValueError(f'Output pids could not be parsed correctly. Output: {output}') from exc
 
@@ -572,9 +593,10 @@ def parse_key(key) -> tuple[str, ...]:
     - condition_var: if this evaluates to False, the command is not executed
     - assignment_var: name of a variable, to which the command output is assigned
     - command_type
+    - options
     """
 
-    return re.search(r'((.*)\?)?((.*)=)?(.*)', key).group(2, 4, 5)
+    return re.search(r'(([^=?;]*)\?)?(([^=?;]*)=)?([^=?;]*)(;(\w+))?', key).group(2, 4, 5, 7)
 
 
 class SystemsWrapper:

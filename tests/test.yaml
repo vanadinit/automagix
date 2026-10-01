@@ -86,6 +86,22 @@ pipeline:
       somevar = 'These curly brackets are not {automatically} replaced'
       print(somevar)
       print(somevar.format(automatically='Yay'))
+  - python;V: print('This is also static {content} ;)')
+  # 4) PTY things
+  # Normal assignment -> no tty
+  - a=remote@testsystem-: > 
+      echo '{"test": "test"}' | jq
+  - python: print(repr(VARS.a))
+  - b=remote@testsystem: tty
+  - python: print(repr(VARS.b))
+  # Assignment with TTY
+  - a=remote@testsystem;tV: > 
+      echo '{"test": "test"}' | jq
+  - python: print(repr(VARS.a))
+  - b=remote@testsystem;t: tty
+  # No Assignment -> tty
+  - python: print(repr(VARS.b))
+  - remote@testsystem;TV: tty
 
 # --- Dirty Hacks ---
   # Inject a new system at runtime
