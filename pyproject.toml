@@ -32,6 +32,7 @@ classifiers = [
 ]
 dependencies = [
     "pyyaml>=5.1",
+    "prompt_toolkit>=3",
 ]
 
 [project.urls]
