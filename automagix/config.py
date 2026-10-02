@@ -7,19 +7,14 @@ from collections import OrderedDict
 from importlib import metadata, import_module
 from pathlib import Path
 from time import sleep
-
-from prompt_toolkit import prompt
+from typing import Any
 
 from .colors import red
 from .helpers import read_yaml, search_script, JustDoNothing
 
-try:
-    from argcomplete import autocomplete
-    from .shell_completion import ScriptFileCompleter, ScriptFieldCompleter
-
-    shell_completion = True
-except ImportError:
-    shell_completion = False
+# ########################
+#   ---- CONSTANTS ----
+# ########################
 
 VERSION = metadata.version('automagix')
 
@@ -39,7 +34,7 @@ SCRIPT_FIELDS = OrderedDict()
 SCRIPT_FIELDS['systems'] = 'Systems'
 SCRIPT_FIELDS['vars'] = 'Variables'
 
-CONFIG = {
+CONFIG: dict[str, Any] = {
     'script_dir': '~/automagix-config',
     'constants': {},
     'encoding': 'utf-8',
@@ -55,6 +50,10 @@ CONFIG = {
 
 MAGIC_SELECTION_INT = -999999999  # Some number nobody would normally type to mark that selection is wanted.
 
+
+# ########################
+#  ---- LOAD CONFIG ----
+# ########################
 
 def find_config(path: Path) -> Path | None:
     candidate = path / '.automagix.cfg.yaml'
@@ -89,21 +88,51 @@ for c_key, c_value in CONFIG.items():
     print(red(f'Warning: environment variable "AUTOMAGIX_{c_key.upper()}" ignored: wrong value type!'))
     sleep(2)
 
+SCRIPT_DIR = os.path.expanduser(os.path.expandvars(CONFIG['script_dir']))
+LOG = logging.getLogger(CONFIG['logger'])
+
+# ########################
+#  LOAD OPTIONAL IMPORTS
+# ########################
+
+try:
+    from argcomplete import autocomplete
+    from .shell_completion import ScriptFileCompleter, ScriptFieldCompleter
+
+    shell_completion = True
+except ImportError:
+    shell_completion = False
+
 if CONFIG.get('logging_lib'):
     log_lib = import_module(CONFIG.get('logging_lib'))
     init_logger = log_lib.init_logger  # noqa F401
 else:
     from .logger import init_logger  # noqa F401
 
-LOG = logging.getLogger(CONFIG['logger'])
-
-SCRIPT_DIR = os.path.expanduser(os.path.expandvars(CONFIG['script_dir']))
-
 if 'teamvault' in CONFIG['modules']:
     import bwtv
 
     SCRIPT_FIELDS['secrets'] = 'Secrets'
 
+prompt_cmd = input
+if 'prompt' in CONFIG['modules']:
+    try:
+        from prompt_toolkit import prompt
+
+        prompt_cmd = prompt
+    except ImportError:
+        LOG.warning('Please install the "prompt_toolkit" via pip to enable "prompt" module.')
+
+advanced_repl = False
+if 'advanced_repl' in CONFIG['modules']:
+    try:
+        import ptpython  # noqa F401
+
+        advanced_repl = True
+    except ImportError:
+        LOG.warning('Please install the "ptpython" via pip to enable "advanced_repl" module.')
+
+progress_bar = JustDoNothing()
 match str(CONFIG['progress_bar']).lower():
     case 'true' | 'basic':
         from .progress_bar import BasicProgressBar
@@ -115,11 +144,12 @@ match str(CONFIG['progress_bar']).lower():
 
             progress_bar = TqdmProgressBar()
         except ImportError:
-            LOG.warning('Progress bar not working. Tqdm not installed.')
-            pass
-    case _:
-        progress_bar = JustDoNothing()
+            LOG.warning('Please install "tqdm" via pip to enable progress bar.')
 
+
+# ########################
+#  ----- FUNCTIONS -----
+# ########################
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -221,7 +251,7 @@ def get_script(args: argparse.Namespace) -> dict:
         validate_script(script)
     except Exception:
         LOG.exception('Script validation failed! Please fix syntax before retrying!')
-        if prompt('To reload and proceed after fixing type "R" and press Enter.\a') == 'R':
+        if prompt_cmd('To reload and proceed after fixing type "R" and press Enter.\a') == 'R':
             return get_script(args=args)
         sys.exit(1)
 
@@ -418,6 +448,10 @@ def update_script_from_row(row: dict, script: dict, index: int):
                 f' but has to be one of {list(SCRIPT_FIELDS.keys())}.')
         script[key_type][key_name] = value
 
+
+# ########################
+#  ---- EXCEPTIONS ----
+# ########################
 
 class UnknownSecretTypeException(Exception):
     pass

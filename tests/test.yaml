@@ -3,6 +3,8 @@ name: Automagix Test  # Just give it a name.
 # Here it might be good practice to give some type of usage information as comment, like
 # USAGE: automagix tests/test.yaml
 required_version: '~=2.5'  # Allowed operators are '==', '!=', '>=', '<=', '>', '<', '~='
+config:
+  modules: ['prompt', 'advanced_repl']
 systems:
   # To avoid unexpected behaviour
   # the systems, vars and secrets KEYS (left side)

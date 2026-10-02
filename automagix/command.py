@@ -1,13 +1,12 @@
 import os
 import re
 import subprocess
-from code import InteractiveConsole
 from dataclasses import dataclass
 from shlex import quote
 from time import time
 
 from .colors import italic, yellow, green, red
-from .config import progress_bar
+from .config import progress_bar, advanced_repl
 from .environment import PipelineEnvironment, AttributedDict, AttributedDummyDict, ConversionError
 
 PERSISTENT_VARS = PVARS = AttributedDict()
@@ -16,12 +15,20 @@ PERSISTENT_VARS = PVARS = AttributedDict()
 AUTOMAGIX_PROMPT = r'\[\033[0;31m\] Automagix \[\033[0m\]\\w > '
 
 AUTOMAGIX_PYTHON_BANNER = """\
+----------------------------------
 Automagix Python Debugging Console
 
 Same variables as in a python command are available, but locals() and globals() are not divided.
 Exit with `exit()` or Ctrl-D.
 """
-AUTOMAGIX_PYTHON_EXITMSG = 'Exit Python Debugging Console.'
+AUTOMAGIX_PYTHON_BANNER_ADV = """\
+----------------------------------
+Automagix Python Debugging Console
+
+Same variables as in a python command are available.
+Exit with `exit()` or Ctrl-D.
+"""
+AUTOMAGIX_PYTHON_EXITMSG = 'Exit Python Debugging Console.\n----------------------------------\n'
 
 KEYBOARD_INTERRUPT_MESSAGE = 'Abort command by user key stroke. Exit code is set to 130.'
 
@@ -340,11 +347,11 @@ class Command:
         """
         answer = self.env.interact(question, progress_portion=self.progress_portion)
 
-        ## Special handling beforehand, because here the answers does not match exactly the definition
+        # ### Special handling beforehand, because here the answers does not match exactly the definition
         if answer == '':  # default
             answer = PA.proceed.answer
 
-        ## reload_index
+        # ### reload_index
         if answer.startswith('R') and PA.reload_index in allowed_options and len(answer) > 1:
             try:
                 match answer[1]:
@@ -357,7 +364,7 @@ class Command:
             except ValueError:
                 pass
 
-        ## Normal cases - first check if in allowed options, to return early if not
+        # ### Normal cases - first check if in allowed options, to return early if not
         if answer not in [ao.answer for ao in allowed_options]:
             self.env.LOG.warning('Invalid input. Try again.')
             return self._ask_user_with_options(question=question, allowed_options=allowed_options)
@@ -376,14 +383,30 @@ class Command:
                 return self._ask_user_with_options(question=question, allowed_options=allowed_options)
             case PA.debug_shell.answer:
                 print()
-                if 'readline' not in vars():
-                    import readline  # noqa F401
+                pyconsole_globals = self._get_python_globals()
+                pyconsole_locals = self._get_python_locals()
 
-                pyconsole_locals = self._get_python_globals()
-                pyconsole_locals.update(self._get_python_locals())
+                if advanced_repl:
+                    if 'embed' not in vars():
+                        from ptpython import embed
 
-                pyconsole = InteractiveConsole(pyconsole_locals)
-                pyconsole.interact(banner=AUTOMAGIX_PYTHON_BANNER, exitmsg=AUTOMAGIX_PYTHON_EXITMSG)
+                    def repl_config(repl):
+                        print(AUTOMAGIX_PYTHON_BANNER_ADV)
+                        repl.show_signature = True
+
+                    embed(
+                        globals=pyconsole_globals,
+                        locals=pyconsole_locals,
+                        configure=repl_config,
+                    )
+                    print(AUTOMAGIX_PYTHON_EXITMSG)
+                else:
+                    if 'readline' not in vars():
+                        import readline  # noqa F401
+                    if 'InteractiveConsole' not in vars():
+                        from code import InteractiveConsole
+                    pyconsole = InteractiveConsole(pyconsole_globals | pyconsole_locals)
+                    pyconsole.interact(banner=AUTOMAGIX_PYTHON_BANNER, exitmsg=AUTOMAGIX_PYTHON_EXITMSG)
 
                 return self._ask_user_with_options(question=question, allowed_options=allowed_options)
             case PA.variables.answer:

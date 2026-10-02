@@ -32,7 +32,6 @@ classifiers = [
 ]
 dependencies = [
     "pyyaml>=5.1",
-    "prompt_toolkit>=3",
 ]
 
 [project.urls]
@@ -44,6 +43,7 @@ shell_completion = ["argcomplete"]
 progress_bar = ["tqdm>=4.66.0"]
 bundlewrap = ["bundlewrap"]
 teamvault = ["bundlewrap-teamvault"]
+advanced_prompt = ["prompt_toolkit>=3", "ptpython>=3"]
 
 [project.scripts]
 automagix = "automagix:main"

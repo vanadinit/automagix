@@ -26,8 +26,8 @@ logging_lib: 'mylib.logging'
 # Logfile directory for parallel processing
 logfile_dir: 'automagix_logs'
 
-# Enable support for modules: bundlewrap, teamvault.
-modules: ['bundlewrap', 'teamvault']
+# Enable support for modules: bundlewrap, teamvault, prompt, advanced_repl.
+modules: ['bundlewrap', 'teamvault', 'prompt', 'advanced_repl']
 
 # Startup script, which is triggered on every start of Automagix.
 # The whole Automagix call with all arguments is passed through as arguments.

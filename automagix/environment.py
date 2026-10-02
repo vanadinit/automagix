@@ -5,9 +5,7 @@ from os import getenv
 from pathlib import Path
 from typing import Any
 
-from prompt_toolkit import prompt
-
-from .config import init_logger, progress_bar
+from .config import init_logger, progress_bar, prompt_cmd
 from .helpers import empty_queued_input_data
 
 
@@ -92,7 +90,7 @@ class PipelineEnvironment:
         self.send_status('user_input_add')
         empty_queued_input_data()
         print(question, end='\a')
-        answer = prompt()
+        answer = prompt_cmd()
         self.send_status('user_input_remove')
         progress_bar.draw(percentage=progress_portion, cursor_col=0)
         return answer

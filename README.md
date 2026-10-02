@@ -86,8 +86,8 @@ All (string) configuration values can be overwritten by the
     # Logfile directory for parallel processing (ONLY for parallel processing!)
     logfile_dir: 'automagix_logs'
     
-    # Enable support for modules: bundlewrap, teamvault.
-    modules: ['bundlewrap', 'teamvault']
+    # Enable support for modules: bundlewrap, teamvault, prompt, advanced_repl.
+    modules: ['bundlewrap', 'teamvault', 'prompt', 'advanced_repl']
 
     # Activate progress bar: "Basic" or "Tqdm", default "" (no progress bar)
     progress_bar: Basic
@@ -656,3 +656,8 @@ Note, that using commands that heavily modify the terminal behaviour/output
 Using automagix itself as command should work, but may lead to confusing
  output as well. Note, that the progress bar will be overwritten by the
  new automagix instance for the duration of the automagix command.
+
+## Advanced REPL and prompt
+You can install "prompt_toolkit" and activate "prompt" module to replace the standard input method with [prompt from prompt_toolkit](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/reference.html#prompt_toolkit.shortcuts.prompt).  
+
+You can install "ptpython" activate "advanced_repl" module to use [ptpython](https://github.com/prompt-toolkit/ptpython) for the interactive Python debugging console.
