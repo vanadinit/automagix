@@ -394,11 +394,7 @@ class Command:
                         print(AUTOMAGIX_PYTHON_BANNER_ADV)
                         repl.show_signature = True
 
-                    embed(
-                        globals=pyconsole_globals,
-                        locals=pyconsole_locals,
-                        configure=repl_config,
-                    )
+                    embed(globals=pyconsole_globals, locals=pyconsole_locals, configure=repl_config)
                     print(AUTOMAGIX_PYTHON_EXITMSG)
                 else:
                     if 'readline' not in vars():

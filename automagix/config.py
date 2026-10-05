@@ -54,6 +54,7 @@ MAGIC_SELECTION_INT = -999999999  # Some number nobody would normally type to ma
 # ########################
 #  ---- LOAD CONFIG ----
 # ########################
+# FIXME: config setting which are evaluated in this section can not be overwritten in script file
 
 def find_config(path: Path) -> Path | None:
     candidate = path / '.automagix.cfg.yaml'
