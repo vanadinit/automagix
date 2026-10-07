@@ -56,7 +56,7 @@ pipeline:
   # Following is how you can check things in Bash.
   # The test fails and therefore we have an empty output.
   # This is desired because every string but an empty one would lead to True.
-  # The 'exit 0' is necessary, because otherwise Automagix would stop thinking there is an error (non-zero exitcode).
+  # The 'exit 0' is necessary, because otherwise Automagix would stop, thinking there is an error (non-zero exitcode).
   - cond2=local: test "confluence" == "jira" && echo -n "True"; exit 0
   - cond2?python: print('Das ging wohl daneben 2')  # So this is not printed.
   - mybool!?local: echo "This should be displayed"  # Boolean converted False string as condition
@@ -81,7 +81,7 @@ pipeline:
   # it can be used in the following ways:
   - PVARS.b?local: echo 'bool({PVARS.b}) is True so condition is met. Works for all types of commands.'
   - python: assert b == {PVARS.b} == PVARS.b
-  # 3) Static content
+  # 3) Static content with '-' at the end of the key
   - python-: |
       somevar = 'These curly brackets are not {automatically} replaced'
       print(somevar)
@@ -94,13 +94,13 @@ pipeline:
   - python: print(repr(VARS.a))
   - b=remote@testsystem: tty
   - python: print(repr(VARS.b))
-  # Assignment with TTY
+  # Assignment with TTY via command option
   - a=remote@testsystem;tV: > 
       echo '{"test": "test"}' | jq
   - python: print(repr(VARS.a))
   - b=remote@testsystem;t: tty
-  # No Assignment -> tty
   - python: print(repr(VARS.b))
+  # No Assignment -> tty
   - remote@testsystem;TV: tty
 
 # --- Dirty Hacks ---
