@@ -1,8 +1,10 @@
 # automagix
 [![PyPI Version](https://img.shields.io/pypi/v/automagix)](https://pypi.org/project/automagix/)
+![Python Version](https://img.shields.io/badge/Python-%3E%3D%203.10-blue)
 [![CI Status](https://github.com/vanadinit/automagix/actions/workflows/python-test.yml/badge.svg)](https://github.com/vanadinit/automagix/actions/workflows/python-test.yml)
 [![CI Status](https://github.com/vanadinit/automagix/actions/workflows/codeql.yml/badge.svg)](https://github.com/vanadinit/automagix/actions/workflows/codeql.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15280/badge)](https://www.bestpractices.dev/projects/15280)
 
 Automation wrapper for bash and python commands. Extended Features version.  
 Fork of Automatix (https://github.com/seibert-media/automatix)
