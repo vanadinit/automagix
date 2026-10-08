@@ -80,7 +80,7 @@ All (string) configuration values can be overwritten by the
     # Path to local bash (default: /bin/bash)
     bash_path: '/bin/bash'
     
-    # SSH Command used for remote connections
+    # SSH Command used for remote connections, should start with 'ssh ' for automatic PTY handling
     ssh_cmd: 'ssh {hostname} sudo '
     
     # Logger

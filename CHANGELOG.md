@@ -1,5 +1,8 @@
 # Changelog
 
+# 4.3.1
+- Fix: SSH command replacement ([#4](https://codeberg.org/vanadinit/automagix/issues/4))
+
 # 4.3.0
 - Feature: Search for .automagix.cfg.yaml in working directory and parents
 - Feature: Switch SSH-Pseudo-Terminal allocation for assignment commands or via command option (t/T)
