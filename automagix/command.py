@@ -522,7 +522,9 @@ class Command:
 
     def _get_remote_command(self, hostname: str) -> str:
         ssh_cmd = self.env.config["ssh_cmd"].format(hostname=hostname)
-        ssh_cmd = ssh_cmd.replace('ssh', 'ssh -t') if self.remote_tty else ssh_cmd
+        _ssh_match = re.match(r'^ssh (.*)', ssh_cmd)
+        if self.remote_tty and _ssh_match:
+            ssh_cmd = f'ssh -t {_ssh_match.group(1)}'
         return f'{ssh_cmd} {quote("RUNNING_INSIDE_AUTOMAGIX=1 bash -c " + quote(self._build_command()))}'
 
     def _remote_handle_keyboard_interrupt(self, hostname: str):
