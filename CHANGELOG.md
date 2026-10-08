@@ -1,6 +1,6 @@
 # Changelog
 
-# 4.3.1
+# 4.3.1 / 4.3.2
 - Fix: SSH command replacement ([#4](https://codeberg.org/vanadinit/automagix/issues/4))
 
 # 4.3.0
